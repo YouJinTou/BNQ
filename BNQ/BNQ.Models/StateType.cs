@@ -3,7 +3,8 @@
     public enum StateType
     {
         Alive,
-        Folded,
+        VillainFolded,
+        HeroFolded,
         CalledFinal,
         Checked,
         CheckedFinal

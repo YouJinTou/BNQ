@@ -20,12 +20,22 @@ namespace BNQ.Brain
             IDictionary<StateActionPair, double> pairs =
                 new Dictionary<StateActionPair, double>();
             double[] sprs = this.GetCappedSprs();
+            IList<Action> allActions = new List<Action>
+            {
+                Action.Fold,
+                Action.Check,
+                Action.Call,
+                Action.Bet50,
+                Action.Raise50,
+                Action.None
+            };
 
             for (int spr = 0; spr < sprs.Length; spr++)
             {
-                State nextState = new State(this.inputState.Board, sprs[spr], this.inputState.Wager, StateType.Alive);
+                State nextState = new State(
+                    this.inputState.Board, sprs[spr], this.inputState.Wager, StateType.Alive, allActions);
 
-                this.GetStateActionPairOnBoard(pairs, nextState, this.hero.Actions);
+                this.GetStateActionPairOnBoard(pairs, nextState, allActions);
             }
 
             int cardsSoFar = Helper.GetDealtCardsCount(this.inputState.Board);
@@ -38,15 +48,7 @@ namespace BNQ.Brain
                 return pairs;
             }
 
-            ICollection<ulong> possibleCards = this.GetPossibleCards(this.inputState.Board);
-            IList<Action> allActions = new List<Action>
-            {
-                Action.Fold,
-                Action.Check,
-                Action.Call,
-                Action.Bet50,
-                Action.Raise50
-            };
+            ICollection<ulong> possibleCards = this.GetPossibleCards(this.inputState.Board);            
 
             foreach (ulong card in possibleCards)
             {
@@ -54,7 +56,8 @@ namespace BNQ.Brain
 
                 for (int spr = 0; spr < sprs.Length; spr++)
                 {
-                    State nextState = new State(nextBoard, sprs[spr], this.inputState.Wager, StateType.Alive);
+                    State nextState = new State(
+                        nextBoard, sprs[spr], this.inputState.Wager, StateType.Alive, allActions);
 
                     this.GetStateActionPairOnBoard(pairs, nextState, allActions);
                 }
@@ -69,7 +72,8 @@ namespace BNQ.Brain
 
                         for (int spr = 0; spr < sprs.Length; spr++)
                         {
-                            State riverState = new State(riverBoard, sprs[spr], this.inputState.Wager, StateType.Alive);
+                            State riverState = new State(
+                                riverBoard, sprs[spr], this.inputState.Wager, StateType.Alive, allActions);
 
                             this.GetStateActionPairOnBoard(pairs, riverState, allActions);
                         }

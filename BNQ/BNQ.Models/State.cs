@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Act = BNQ.Models.Action;
+using System;
+using System.Collections.Generic;
 
 namespace BNQ.Models
 {
@@ -10,8 +12,9 @@ namespace BNQ.Models
         private double pot;
         private double wager;
         private StateType type;
+        private ICollection<Act> actions;
 
-        public State(ulong board, double spr, double wager, StateType type)
+        public State(ulong board, double spr, double wager, StateType type, ICollection<Act> actions)
         {
             this.board = board;
             this.spr = this.NormalizeSpr(spr);
@@ -19,6 +22,7 @@ namespace BNQ.Models
             this.pot = this.stack / this.spr;
             this.wager = wager;
             this.type = type;
+            this.actions = actions;
         }
 
         public ulong Board
@@ -42,6 +46,14 @@ namespace BNQ.Models
             get
             {
                 return this.type;
+            }
+        }
+
+        public ICollection<Act> Actions
+        {
+            get
+            {
+                return this.actions;
             }
         }
 

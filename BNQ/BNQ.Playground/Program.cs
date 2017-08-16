@@ -10,9 +10,9 @@ namespace BNQ.Playground
         static void Main(string[] args)
         {
             ulong board = 642114790621184;
-            var state = new State(board, 33, 0, StateType.Alive);
-            var hand = new IHolding[] { new Holding(Card.cK, Card.hJ) };
             var actions = new Act[] { Act.Bet50, Act.Check };
+            var state = new State(board, 33, 0, StateType.Alive, actions);
+            var hand = new IHolding[] { new Holding(Card.cK, Card.hJ) };
             var hero = new Player(hand, actions);
             var generator = new StateActionGenerator(state, hero);
             var stateActionPairs = generator.GeneratePairs();
