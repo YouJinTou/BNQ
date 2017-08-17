@@ -7,7 +7,7 @@ namespace BQN.Models.Tests
     [TestFixture]
     public class BoardTests
     {
-        private const ulong Flop = 642114790621184;
+        private const Card Flop = Card.hK | Card.dA | Card.sQ;
 
         private IBoard GetBoard()
         {
@@ -61,8 +61,8 @@ namespace BQN.Models.Tests
                 "Either invalid number of cards or there are repeating cards.") > -1);
         }
 
-        [TestCase(new Card[] { Card.c2, Card.c3, Card.c4 }, (ulong)273)]
-        [TestCase(new Card[] { Card.cA, Card.dK, Card.s7 }, (ulong)316659357188096)]
+        [TestCase(new Card[] { Card.c2, Card.c3, Card.c4 }, Card.c2 | Card.c3 | Card.c4)]
+        [TestCase(new Card[] { Card.cA, Card.dK, Card.s7 }, Card.cA | Card.dK | Card.s7)]
         public void Constructor_PassValidFlop_ShouldSetFlop(Card[] flopCards, ulong expectedFlop)
         {
             var board = new Board(flopCards);
@@ -93,9 +93,9 @@ namespace BQN.Models.Tests
             Assert.IsTrue(ex.Message.IndexOf("Repeats are not allowed.") > -1);
         }
 
-        [TestCase(Card.hJ, (ulong)274877906944, Flop | 274877906944)]
-        [TestCase(Card.s8, (ulong)134217728, Flop | 134217728)]
-        [TestCase(Card.h6, (ulong)262144, Flop | 262144)]
+        [TestCase(Card.hJ, Card.hJ, Flop | Card.hJ)]
+        [TestCase(Card.s8, Card.s8, Flop | Card.s8)]
+        [TestCase(Card.h6, Card.h6, Flop | Card.h6)]
         public void AddTurn_PassValidTurn_ShouldSetTurn(
             Card turn, ulong expectedTurn, ulong expectedCards)
         {
@@ -132,9 +132,9 @@ namespace BQN.Models.Tests
             Assert.IsTrue(ex.Message.IndexOf("Repeats are not allowed.") > -1);
         }
 
-        [TestCase(Card.hJ, Card.sT, (ulong)34359738368, Flop | 274877906944 | 34359738368)]
-        [TestCase(Card.s8, Card.c3, (ulong)16, Flop | 134217728 | 16)]
-        [TestCase(Card.h6, Card.d6, (ulong)131072, Flop | 262144 | 131072)]
+        [TestCase(Card.hJ, Card.sT, Card.sT, Flop | Card.hJ | Card.sT)]
+        [TestCase(Card.s8, Card.c3, Card.c3, Flop | Card.s8 | Card.c3)]
+        [TestCase(Card.h6, Card.d6, Card.d6, Flop | Card.h6 | Card.d6)]
         public void AddRiver_PassValidRiver_ShouldSetRiver(
             Card turn, Card river, ulong expectedRiver, ulong expectedCards)
         {

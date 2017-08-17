@@ -90,7 +90,7 @@ namespace BNQ.Models
         private ulong ValidateCard(Card card)
         {
             ulong binaryCard = (ulong)card;
-            ulong lastCard = 2251799813685248;
+            ulong lastCard = 36028797018963968;
             bool cardExists = (binaryCard & (binaryCard - 1)) == 0;
 
             if (binaryCard == 0 || binaryCard > lastCard || !cardExists)

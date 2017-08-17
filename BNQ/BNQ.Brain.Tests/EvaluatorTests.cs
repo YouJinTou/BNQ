@@ -12,23 +12,26 @@ namespace BNQ.Brain.Tests
         [TestCase(Card.dA | Card.h9 | Card.sQ | Card.sK | Card.sA, Card.sJ | Card.sT)]
         [TestCase(Card.dA | Card.dK | Card.dQ | Card.dT | Card.h3, Card.dJ | Card.s9)]
         [TestCase(Card.dA | Card.dK | Card.dQ | Card.dT | Card.dJ, Card.sJ | Card.s9)]
-        public void Evaluate_RoyalFlush_ReturnRoyalFlush(ulong board, ulong holding)
+        [TestCase(Card.dA | Card.d2 | Card.d3 | Card.h8 | Card.sJ, Card.d4 | Card.d5)]
+        [TestCase(Card.dA | Card.d2 | Card.d3 | Card.h8 | Card.sJ, Card.d4 | Card.d5)]
+        [TestCase(Card.d5 | Card.d6 | Card.d7 | Card.h8 | Card.s9, Card.d3 | Card.d4)]
+        [TestCase(Card.d5 | Card.d6 | Card.d7 | Card.h8 | Card.s9, Card.d8 | Card.d9)]
+        public void Evaluate_StraightFlush_ReturnStraightFlush(ulong board, ulong holding)
         {
             var evaluator = new Evaluator();
 
-            Assert.AreEqual(Hand.RoyalFlush, evaluator.Evaluate(board, holding));
+            Assert.AreEqual(Hand.StraightFlush, evaluator.Evaluate(board, holding));
         }
 
         [TestCase(Card.s5 | Card.c7 | Card.c9 | Card.cT | Card.cJ, Card.cA | Card.cK)]
         [TestCase(Card.cJ | Card.dA | Card.sK | Card.hQ | Card.dT, Card.dK | Card.dQ)]
         [TestCase(Card.dA | Card.dK | Card.dQ | Card.dT | Card.h3, Card.sJ | Card.s9)]
-        [TestCase(Card.dA | Card.d2 | Card.d3 | Card.h8 | Card.sJ, Card.d4 | Card.d5)]
         [TestCase(Card.h2 | Card.s2 | Card.d4 | Card.s7 | Card.cT, Card.dA | Card.c2)]
-        public void Evaluate_NotRoyalFlush_NotReturnRoyalFlush(ulong board, ulong holding)
+        public void Evaluate_NotStraightFlush_NotReturnStraightFlush(ulong board, ulong holding)
         {
             var evaluator = new Evaluator();
 
-            Assert.AreNotEqual(Hand.RoyalFlush, evaluator.Evaluate(board, holding));
+            Assert.AreNotEqual(Hand.StraightFlush, evaluator.Evaluate(board, holding));
         }
 
         [TestCase(Card.h2 | Card.s2 | Card.d4 | Card.s7 | Card.cT, Card.dA | Card.c2)]
@@ -37,14 +40,6 @@ namespace BNQ.Brain.Tests
             var evaluator = new Evaluator();
 
             Assert.AreNotEqual(Hand.StraightFlush, evaluator.Evaluate(board, holding));
-        }
-
-        [TestCase(Card.dA | Card.d2 | Card.d3 | Card.h8 | Card.sJ, Card.d4 | Card.d5)]
-        public void Evaluate_StraightFlush_ReturnStraightFlush(ulong board, ulong holding)
-        {
-            var evaluator = new Evaluator();
-
-            Assert.AreEqual(Hand.StraightFlush, evaluator.Evaluate(board, holding));
         }
 
         [TestCase(Card.sA | Card.hA | Card.s2 | Card.dK | Card.c8, Card.cA | Card.dA)]
@@ -89,6 +84,17 @@ namespace BNQ.Brain.Tests
             var evaluator = new Evaluator();
 
             Assert.AreEqual(Hand.TwoPair, evaluator.Evaluate(board, holding));
+        }
+
+        [TestCase(Card.c5 | Card.s6 | Card.h7 | Card.dA | Card.sQ, Card.d8 | Card.h9)]
+        [TestCase(Card.hT | Card.sJ | Card.hQ | Card.hK | Card.hA, Card.d8 | Card.s9)]
+        [TestCase(Card.d2 | Card.s3 | Card.c4 | Card.cT | Card.dJ, Card.h5 | Card.sA)]
+        [TestCase(Card.d2 | Card.s3 | Card.c4 | Card.sA | Card.h5, Card.s5 | Card.cA)]
+        public void Evaluate_Straight_ReturnStraight(ulong board, ulong holding)
+        {
+            var evaluator = new Evaluator();
+
+            Assert.AreEqual(Hand.Straight, evaluator.Evaluate(board, holding));
         }
     }
 }

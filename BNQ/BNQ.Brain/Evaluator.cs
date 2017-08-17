@@ -1,68 +1,129 @@
 ﻿using BNQ.Models;
-using System;
-using System.IO;
 
 namespace BNQ.Brain
 {
     public class Evaluator : IEvaluator
     {
+        private const int MasksLength = 13;
+
+        private readonly ulong[] NibbleMasks = new ulong[] 
+        {
+            0xF,
+            0xF0,
+            0xF00,
+            0xF000,
+            0xF0000,
+            0xF00000,
+            0xF000000,
+            0xF0000000,
+            0xF00000000,
+            0xF000000000,
+            0xF0000000000,
+            0xF00000000000,
+            0xF000000000000,
+            0xF0000000000000
+        };
+        private readonly ulong[] QuadsMasks = new ulong[]
+        {
+            0x4,
+            0x40,
+            0x400,
+            0x4000,
+            0x40000,
+            0x400000,
+            0x4000000,
+            0x40000000,
+            0x400000000,
+            0x4000000000,
+            0x40000000000,
+            0x400000000000,
+            0x4000000000000,
+            0x40000000000000
+        };
+        private readonly ulong[] TripsMasks = new ulong[]
+        {
+            0x3,
+            0x30,
+            0x300,
+            0x3000,
+            0x30000,
+            0x300000,
+            0x3000000,
+            0x30000000,
+            0x300000000,
+            0x3000000000,
+            0x30000000000,
+            0x300000000000,
+            0x3000000000000,
+            0x30000000000000
+        };
+        private readonly ulong[] PairMasks = new ulong[]
+        {
+            0x2,
+            0x20,
+            0x200,
+            0x2000,
+            0x20000,
+            0x200000,
+            0x2000000,
+            0x20000000,
+            0x200000000,
+            0x2000000000,
+            0x20000000000,
+            0x200000000000,
+            0x2000000000000,
+            0x20000000000000
+        };
+
         public Hand Evaluate(ulong board, ulong holding)
         {
             ulong hand = board | holding;
-            //ulong hand4 = hand >> 4;
-            //ulong hand8 = hand >> 8;
-            //ulong hand12 = hand >> 12;
-            //ulong hand16= hand >> 16;
-            ulong straightFlush = hand & (hand >> 4) & (hand >> 8) & (hand >> 12) & (hand >> 16);
-            //string handSt = string.Format("00: {0}\n", Convert.ToString((long)hand, 2));
-            //string Hand4St = string.Format("04: {0}\n", Convert.ToString((long)hand4, 2));
-            //string hand8St = string.Format("08: {0}\n", Convert.ToString((long)hand8, 2));
-            //string hand12St = string.Format("12: {0}\n", Convert.ToString((long)hand12, 2));
-            //string hand16St = string.Format("16: {0}\n", Convert.ToString((long)hand16, 2));
-
-            //File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "royal.txt"),
-            //    handSt + Hand4St + hand8St + hand12St + hand16St);
-
-            ulong hand1 = hand >> 1;
-            ulong hand2 = hand >> 2;
-            ulong hand3 = hand >> 3;
-            ulong quads = hand & (hand >> 4) & (hand >> 8) & (hand >> 12) & (hand >> 16);
-            string handSt = string.Format("00: {0}\n", Convert.ToString((long)hand, 2));
-            string hand1St = string.Format("01: {0}\n", Convert.ToString((long)hand1, 2));
-            string hand2St = string.Format("02: {0}\n", Convert.ToString((long)hand2, 2));
-            string hand3St = string.Format("03: {0}\n", Convert.ToString((long)hand3, 2));
-
-            File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "royal.txt"),
-                handSt + hand1St + hand2St + hand3St);
+            ulong acesMask = hand & this.NibbleMasks[MasksLength];
+            ulong lowHand = hand | (acesMask >> 52);
+            ulong straightFlush = lowHand & (lowHand >> 4) & (lowHand >> 8) & (lowHand >> 12) & (lowHand >> 16);
 
             if (straightFlush != 0)
             {
-                bool hasAce = (hand & 4222124650659840) != 0;
-                bool hasTen = (hand & 64424509440) != 0;
-                bool hasDeuce = (hand & 15) != 0;
-
-                return (hasAce && hasTen) ? Hand.RoyalFlush : Hand.StraightFlush;
+                return Hand.StraightFlush;
             }
 
-            ulong fourOfAKind = hand & (hand >> 1) & (hand >> 2) & (hand >> 3) & 0x1111111111111111;
+            ulong popCount = hand - ((hand >> 1) & 0x5555555555555555);
+            popCount = (popCount & 0x3333333333333333) + ((popCount >> 2) & 0x3333333333333333);
+            bool hasTrips = false;
+            int pairCount = 0;
 
-            if (fourOfAKind != 0)
+            for (int i = 0; i < this.NibbleMasks.Length; i++)
             {
-                return Hand.FourOfAKind;
+                if ((popCount & (this.NibbleMasks[i])) == this.QuadsMasks[i])
+                {
+                    return Hand.FourOfAKind;
+                }
+
+                if ((popCount & (this.NibbleMasks[i])) == this.TripsMasks[i])
+                {
+                    hasTrips = true;
+
+                    continue;
+                }
+
+                if ((popCount & (this.NibbleMasks[i])) == this.PairMasks[i])
+                {
+                    pairCount++;
+                }
             }
 
-            ulong threeOfAKind = hand & (hand >> 1) & (hand >> 2) & 0xFFFFFFFFFFFFFFFF;
+            ulong straightMask = 131072 - 1;
 
-            if (threeOfAKind != 0)
+            switch (pairCount)
             {
-                return Hand.ThreeOfAKind;
-            }
-
-            ulong twoPair = hand & (hand >> 1) & 0xFFFFFFFFFFFFFFFF;
-
-            if (twoPair != 0)
-            {
-                return Hand.TwoPair;
+                case 0:
+                    return hasTrips ? Hand.ThreeOfAKind : Hand.HighCard;
+                case 1:
+                    return hasTrips ? Hand.FullHouse : Hand.OnePair;
+                case 2:
+                    return Hand.TwoPair;
+                case 3:
+                    return Hand.TwoPair;
             }
 
             return Hand.HighCard;

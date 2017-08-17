@@ -11,7 +11,6 @@
         Flush = 32,
         FullHouse = 64,
         FourOfAKind = 128,
-        StraightFlush = 256,
-        RoyalFlush = 512
+        StraightFlush = 256
     }
 }

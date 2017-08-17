@@ -300,7 +300,7 @@ namespace BNQ.Brain
 
         private ulong GetNextBoard(ulong board)
         {
-            ulong lastCard = 2251799813685248;
+            ulong lastCard = 36028797018963968;
 
             for (ulong card = 1; card <= lastCard; card *= 2)
             {
