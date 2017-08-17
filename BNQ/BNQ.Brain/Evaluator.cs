@@ -2,6 +2,7 @@
 
 namespace BNQ.Brain
 {
+
     public class Evaluator : IEvaluator
     {
         private const int MasksLength = 13;
@@ -79,8 +80,8 @@ namespace BNQ.Brain
         {
             ulong hand = board | holding;
             ulong acesMask = hand & this.NibbleMasks[MasksLength];
-            ulong lowHand = hand | (acesMask >> 52);
-            ulong straightFlush = lowHand & (lowHand >> 4) & (lowHand >> 8) & (lowHand >> 12) & (lowHand >> 16);
+            hand |= (acesMask >> 52);
+            ulong straightFlush = hand & (hand >> 4) & (hand >> 8) & (hand >> 12) & (hand >> 16);
 
             if (straightFlush != 0)
             {
@@ -89,30 +90,54 @@ namespace BNQ.Brain
 
             ulong popCount = hand - ((hand >> 1) & 0x5555555555555555);
             popCount = (popCount & 0x3333333333333333) + ((popCount >> 2) & 0x3333333333333333);
+            ulong flushMask = 0xF;
+            int straightCards = 0;
             bool hasTrips = false;
             int pairCount = 0;
 
             for (int i = 0; i < this.NibbleMasks.Length; i++)
             {
-                if ((popCount & (this.NibbleMasks[i])) == this.QuadsMasks[i])
+                ulong mask = (popCount & this.NibbleMasks[i]);
+
+                if (mask == 0)
+                {
+                    if (straightCards >= 5)
+                    {
+                        break;
+                    }
+
+                    flushMask = 0xF;
+                    straightCards = 0;
+
+                    continue;
+                }
+                else
+                {
+                    straightCards++;
+                }
+
+                if (mask == this.QuadsMasks[i])
                 {
                     return Hand.FourOfAKind;
                 }
 
-                if ((popCount & (this.NibbleMasks[i])) == this.TripsMasks[i])
+                if (mask == this.TripsMasks[i])
                 {
                     hasTrips = true;
 
                     continue;
                 }
 
-                if ((popCount & (this.NibbleMasks[i])) == this.PairMasks[i])
+                if (mask == this.PairMasks[i])
                 {
                     pairCount++;
                 }
             }
 
-            ulong straightMask = 131072 - 1;
+            if (straightCards >= 5)
+            {
+                return (flushMask != 0xF && flushMask != 0) ? Hand.Flush : Hand.Straight;
+            }
 
             switch (pairCount)
             {
@@ -121,7 +146,7 @@ namespace BNQ.Brain
                 case 1:
                     return hasTrips ? Hand.FullHouse : Hand.OnePair;
                 case 2:
-                    return Hand.TwoPair;
+                    return hasTrips ? Hand.FullHouse : Hand.TwoPair;
                 case 3:
                     return Hand.TwoPair;
             }
