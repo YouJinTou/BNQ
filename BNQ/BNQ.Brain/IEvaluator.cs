@@ -4,6 +4,6 @@ namespace BNQ.Brain
 {
     internal interface IEvaluator
     {
-        Hand Evaluate(ulong board, ulong holding);
+        Hand GetHand(ulong board, ulong holding);
     }
 }

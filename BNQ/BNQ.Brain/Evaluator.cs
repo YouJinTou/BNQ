@@ -1,4 +1,5 @@
-﻿using BNQ.Models;
+﻿using System;
+using BNQ.Models;
 
 namespace BNQ.Brain
 {
@@ -82,11 +83,14 @@ namespace BNQ.Brain
             0x20000000000000
         };
 
-        public Hand Evaluate(ulong board, ulong holding)
+        public int Evaluate(ulong[] hands)
         {
-            ulong hand = board | holding;
-            ulong acesMask = hand & this.NibbleMasks[MasksLength];
-            hand |= (acesMask >> 52);
+            return -1;
+        }
+
+        public Hand GetHand(ulong board, ulong holding)
+        {
+            ulong hand = this.ParseHand(board, holding);
             ulong straightFlush = hand & (hand >> 4) & (hand >> 8) & (hand >> 12) & (hand >> 16);
 
             if (straightFlush != 0)
@@ -94,8 +98,7 @@ namespace BNQ.Brain
                 return Hand.StraightFlush;
             }
 
-            ulong popCount = hand - ((hand >> 1) & 0x5555555555555555);
-            popCount = (popCount & 0x3333333333333333) + ((popCount >> 2) & 0x3333333333333333);
+            ulong popCount = this.GetPopCount(hand);            
             int straightCards = 0;
             int pairCount = 0;
             bool hasTrips = false;
@@ -107,7 +110,6 @@ namespace BNQ.Brain
             for (int i = 0; i < this.NibbleMasks.Length; i++)
             {
                 ulong mask = (popCount & this.NibbleMasks[i]);
-                bool isLowNibble = (i == 0);
 
                 if (mask == 0)
                 {
@@ -120,19 +122,19 @@ namespace BNQ.Brain
 
                     continue;
                 }
-                else
-                {
-                    if (!isLowNibble)
-                    {
-                        ulong nibble = (hand >> i * 4) & this.NibbleMasks[0];
-                        clubsCount = ((nibble & this.FlushMasks[0]) != 0) ? clubsCount + 1 : clubsCount;
-                        diamondsCount = ((nibble & this.FlushMasks[1]) != 0) ? diamondsCount + 1 : diamondsCount;
-                        heartsCount = ((nibble & this.FlushMasks[2]) != 0) ? heartsCount + 1 : heartsCount;
-                        spadesCount = ((nibble & this.FlushMasks[3]) != 0) ? spadesCount + 1 : spadesCount;
-                    }
 
-                    straightCards++;
+                bool isLowNibble = (i == 0);
+
+                if (!isLowNibble)
+                {
+                    ulong nibble = (hand >> i * 4) & this.NibbleMasks[0];
+                    clubsCount = ((nibble & this.FlushMasks[0]) != 0) ? clubsCount + 1 : clubsCount;
+                    diamondsCount = ((nibble & this.FlushMasks[1]) != 0) ? diamondsCount + 1 : diamondsCount;
+                    heartsCount = ((nibble & this.FlushMasks[2]) != 0) ? heartsCount + 1 : heartsCount;
+                    spadesCount = ((nibble & this.FlushMasks[3]) != 0) ? spadesCount + 1 : spadesCount;
                 }
+
+                straightCards++;
 
                 if (mask == this.QuadsMasks[i])
                 {
@@ -146,7 +148,7 @@ namespace BNQ.Brain
                     continue;
                 }
 
-                if (!isLowNibble && mask == this.PairMasks[i])
+                if (mask == this.PairMasks[i] && !isLowNibble)
                 {
                     pairCount++;
                 }
@@ -155,6 +157,29 @@ namespace BNQ.Brain
             bool hasFlush = (clubsCount >= 5 || diamondsCount >= 5 || heartsCount >= 5 || spadesCount >= 5);
             bool hasStraight = (straightCards >= 5);
 
+            return this.GetPairBasedHand(pairCount, hasFlush, hasStraight, hasTrips);
+        }
+
+        private ulong ParseHand(ulong board, ulong holding)
+        {
+            ulong hand = board | holding;
+            ulong acesMask = hand & this.NibbleMasks[MasksLength];
+            ulong lowNibble = (acesMask >> 52);
+            hand |= lowNibble;
+
+            return hand;
+        }
+
+        private ulong GetPopCount(ulong hand)
+        {
+            ulong popCount = hand - ((hand >> 1) & 0x5555555555555555);
+            popCount = (popCount & 0x3333333333333333) + ((popCount >> 2) & 0x3333333333333333);
+
+            return popCount;
+        }
+
+        private Hand GetPairBasedHand(int pairCount, bool hasFlush, bool hasStraight, bool hasTrips)
+        {
             switch (pairCount)
             {
                 case 0:
