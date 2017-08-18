@@ -2,12 +2,11 @@
 
 namespace BNQ.Brain
 {
-
     public class Evaluator : IEvaluator
     {
         private const int MasksLength = 13;
 
-        private readonly ulong[] NibbleMasks = new ulong[] 
+        private readonly ulong[] NibbleMasks = new ulong[]
         {
             0xF,
             0xF0,
@@ -40,6 +39,13 @@ namespace BNQ.Brain
             0x400000000000,
             0x4000000000000,
             0x40000000000000
+        };
+        private readonly ulong[] FlushMasks = new ulong[]
+        {
+            0x1,
+            0x2,
+            0x4,
+            0x8
         };
         private readonly ulong[] TripsMasks = new ulong[]
         {
@@ -90,14 +96,18 @@ namespace BNQ.Brain
 
             ulong popCount = hand - ((hand >> 1) & 0x5555555555555555);
             popCount = (popCount & 0x3333333333333333) + ((popCount >> 2) & 0x3333333333333333);
-            ulong flushMask = 0xF;
             int straightCards = 0;
-            bool hasTrips = false;
             int pairCount = 0;
+            bool hasTrips = false;
+            int clubsCount = 0;
+            int diamondsCount = 0;
+            int heartsCount = 0;
+            int spadesCount = 0;
 
             for (int i = 0; i < this.NibbleMasks.Length; i++)
             {
                 ulong mask = (popCount & this.NibbleMasks[i]);
+                bool isLowNibble = (i == 0);
 
                 if (mask == 0)
                 {
@@ -106,13 +116,21 @@ namespace BNQ.Brain
                         break;
                     }
 
-                    flushMask = 0xF;
                     straightCards = 0;
 
                     continue;
                 }
                 else
                 {
+                    if (!isLowNibble)
+                    {
+                        ulong nibble = (hand >> i * 4) & this.NibbleMasks[0];
+                        clubsCount = ((nibble & this.FlushMasks[0]) != 0) ? clubsCount + 1 : clubsCount;
+                        diamondsCount = ((nibble & this.FlushMasks[1]) != 0) ? diamondsCount + 1 : diamondsCount;
+                        heartsCount = ((nibble & this.FlushMasks[2]) != 0) ? heartsCount + 1 : heartsCount;
+                        spadesCount = ((nibble & this.FlushMasks[3]) != 0) ? spadesCount + 1 : spadesCount;
+                    }
+
                     straightCards++;
                 }
 
@@ -128,27 +146,48 @@ namespace BNQ.Brain
                     continue;
                 }
 
-                if (mask == this.PairMasks[i])
+                if (!isLowNibble && mask == this.PairMasks[i])
                 {
                     pairCount++;
                 }
             }
 
-            if (straightCards >= 5)
-            {
-                return (flushMask != 0xF && flushMask != 0) ? Hand.Flush : Hand.Straight;
-            }
+            bool hasFlush = (clubsCount >= 5 || diamondsCount >= 5 || heartsCount >= 5 || spadesCount >= 5);
+            bool hasStraight = (straightCards >= 5);
 
             switch (pairCount)
             {
                 case 0:
+                    if (hasFlush)
+                    {
+                        return Hand.Flush;
+                    }
+
+                    if (hasStraight)
+                    {
+                        return Hand.Straight;
+                    }
+
                     return hasTrips ? Hand.ThreeOfAKind : Hand.HighCard;
                 case 1:
-                    return hasTrips ? Hand.FullHouse : Hand.OnePair;
                 case 2:
-                    return hasTrips ? Hand.FullHouse : Hand.TwoPair;
                 case 3:
-                    return Hand.TwoPair;
+                    if (hasTrips)
+                    {
+                        return Hand.FullHouse;
+                    }
+
+                    if (hasFlush)
+                    {
+                        return Hand.Flush;
+                    }
+
+                    if (hasStraight)
+                    {
+                        return Hand.Straight;
+                    }
+
+                    return (pairCount == 1) ? Hand.OnePair : Hand.TwoPair;
             }
 
             return Hand.HighCard;

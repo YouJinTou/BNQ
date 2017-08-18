@@ -106,11 +106,32 @@ namespace BNQ.Brain.Tests
         [TestCase(Card.h9 | Card.d7 | Card.dJ | Card.s3 | Card.c2, Card.d9 | Card.h7)]
         [TestCase(Card.dQ | Card.sQ | Card.h7 | Card.c5 | Card.d2, Card.cT | Card.sT)]
         [TestCase(Card.h6 | Card.s6 | Card.cT | Card.dT | Card.sA, Card.sK | Card.dJ)]
+        [TestCase(Card.h6 | Card.s6 | Card.cT | Card.dT | Card.sA, Card.hA | Card.dJ)]
         public void Evaluate_TwoPair_ReturnTwoPair(ulong board, ulong holding)
         {
             var evaluator = new Evaluator();
 
             Assert.AreEqual(Hand.TwoPair, evaluator.Evaluate(board, holding));
-        }        
+        }
+
+        [TestCase(Card.h9 | Card.d7 | Card.dJ | Card.s3 | Card.c2, Card.d9 | Card.h8)]
+        [TestCase(Card.dQ | Card.sQ | Card.h7 | Card.c5 | Card.d2, Card.cA | Card.sT)]
+        [TestCase(Card.h6 | Card.s6 | Card.cT | Card.cJ | Card.sA, Card.sK | Card.d8)]
+        public void Evaluate_OnePair_ReturnOnePair(ulong board, ulong holding)
+        {
+            var evaluator = new Evaluator();
+
+            Assert.AreEqual(Hand.OnePair, evaluator.Evaluate(board, holding));
+        }
+
+        [TestCase(Card.h9 | Card.d7 | Card.dJ | Card.s3 | Card.c2, Card.dT | Card.h4)]
+        [TestCase(Card.dQ | Card.sK | Card.h7 | Card.c5 | Card.d2, Card.cA | Card.sT)]
+        [TestCase(Card.h5 | Card.s6 | Card.cT | Card.cJ | Card.s2, Card.sK | Card.d8)]
+        public void Evaluate_HighCard_ReturnHighCard(ulong board, ulong holding)
+        {
+            var evaluator = new Evaluator();
+
+            Assert.AreEqual(Hand.HighCard, evaluator.Evaluate(board, holding));
+        }
     }
 }
