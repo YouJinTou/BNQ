@@ -2,28 +2,28 @@
 {
     public struct Holding : IHolding
     {
-        private Card first;
-        private Card second;
+        private HandStrength handStrength;
+        private int rank;
 
-        public Holding(Card first, Card second)
+        public Holding(HandStrength handStrength, int rank)
         {
-            this.first = first;
-            this.second = second;
+            this.handStrength = handStrength;
+            this.rank = rank;
         }
 
-        public Card First
+        public HandStrength HandStrength
         {
             get
             {
-                return this.first;
+                return this.handStrength;
             }
         }
 
-        public Card Second
+        public int Rank
         {
             get
             {
-                return this.second;
+                return this.rank;
             }
         }
     }

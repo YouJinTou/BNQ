@@ -1,16 +1,30 @@
 ﻿namespace BNQ.Models
 {
-    public enum Hand
+    public struct Hand : IHand
     {
-        None = 0,
-        HighCard = 1,
-        OnePair = 2,
-        TwoPair = 4,
-        ThreeOfAKind = 8,
-        Straight = 16,
-        Flush = 32,
-        FullHouse = 64,
-        FourOfAKind = 128,
-        StraightFlush = 256
+        private Card first;
+        private Card second;
+
+        public Hand(Card first, Card second)
+        {
+            this.first = first;
+            this.second = second;
+        }
+
+        public Card First
+        {
+            get
+            {
+                return this.first;
+            }
+        }
+
+        public Card Second
+        {
+            get
+            {
+                return this.second;
+            }
+        }
     }
 }

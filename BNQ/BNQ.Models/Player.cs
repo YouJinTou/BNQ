@@ -2,16 +2,16 @@
 {
     public class Player : IPlayer
     {
-        private IHolding[] holdings;
+        private IHand[] holdings;
         private Action[] actions;
 
-        public Player(IHolding[] holdings, Action[] actions)
+        public Player(IHand[] holdings, Action[] actions)
         {
             this.holdings = holdings;
             this.actions = actions;
         }
 
-        public IHolding[] Holdings
+        public IHand[] Hands
         {
             get
             {

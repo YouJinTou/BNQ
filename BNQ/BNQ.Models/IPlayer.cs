@@ -2,7 +2,7 @@
 {
     public interface IPlayer
     {
-        IHolding[] Holdings { get; }
+        IHand[] Hands { get; }
 
         Action[] Actions { get; }
     }

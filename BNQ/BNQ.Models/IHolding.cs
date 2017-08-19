@@ -2,8 +2,8 @@
 {
     public interface IHolding
     {
-        Card First { get; }
+        HandStrength HandStrength { get; }
 
-        Card Second { get; }
+        int Rank { get; }
     }
 }

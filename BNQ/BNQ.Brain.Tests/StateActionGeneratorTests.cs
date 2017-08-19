@@ -21,14 +21,14 @@ namespace BNQ.Brain.Tests
         [TestCase()]
         public void Generate_GivenFlop_ReturnStateActions()
         {
-            var holdings = new HashSet<IHolding> { new Holding(Card.hA, Card.dK) };
+            var hand = new HashSet<IHand> { new Hand(Card.hA, Card.dK) };
             var actions = new HashSet<Act>
             {
                 Act.Bet50,
                 Act.Check
             };
             StateActionGenerator generator = new StateActionGenerator(
-                this.GetState(), new Player(holdings.ToArray(), actions.ToArray()));
+                this.GetState(), new Player(hand.ToArray(), actions.ToArray()));
 
             generator.GeneratePairs();
         }

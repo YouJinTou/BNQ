@@ -140,8 +140,8 @@ namespace BNQ.Brain
         {
             ICollection<ulong> dealtCards = new HashSet<ulong>()
             {
-                (ulong)this.hero.Holdings[0].First,
-                (ulong)this.hero.Holdings[0].Second
+                (ulong)this.hero.Hands[0].First,
+                (ulong)this.hero.Hands[0].Second
             };
 
             for (int i = 0; i < 64; i++)

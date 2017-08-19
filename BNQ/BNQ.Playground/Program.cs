@@ -23,7 +23,6 @@ namespace BNQ.Playground
             var sw = new Stopwatch();
             var evaluator = new Evaluator();
             var total = 0;
-            ulong holding = 512 | 1024;
 
             sw.Start();
 
@@ -35,9 +34,9 @@ namespace BNQ.Playground
                     {
                         for (ulong x = 128; x <= 36028797018963968; x *= 2)
                         {
-                            ulong board = i | j | z | x | 256;
+                            ulong board = z | x | 256 | 512 | 1024;
 
-                            evaluator.GetHand(board, holding);
+                            evaluator.GetHolding(board, i | j);
 
                             total++;
                         }

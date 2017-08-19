@@ -1,12 +1,12 @@
-﻿using System;
-using BNQ.Models;
+﻿using BNQ.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BNQ.Brain
 {
     public class Evaluator : IEvaluator
     {
-        private const int MasksLength = 13;
-
         private readonly ulong[] NibbleMasks = new ulong[]
         {
             0xF,
@@ -83,87 +83,166 @@ namespace BNQ.Brain
             0x20000000000000
         };
 
-        public int Evaluate(ulong[] hands)
+        public int Evaluate(ulong board, ulong[] hands)
         {
-            return -1;
-        }
+            int bestIndex = -1;
+            int bestRank = 0;
+            HandStrength bestHand = HandStrength.None;
 
-        public Hand GetHand(ulong board, ulong holding)
-        {
-            ulong hand = this.ParseHand(board, holding);
-            ulong straightFlush = hand & (hand >> 4) & (hand >> 8) & (hand >> 12) & (hand >> 16);
-
-            if (straightFlush != 0)
+            for (int i = 0; i < hands.Length; i++)
             {
-                return Hand.StraightFlush;
+                IHolding holding = this.GetHolding(board, hands[i]);
+
+                if (holding.HandStrength > bestHand)
+                {
+                    bestIndex = i;
+                    bestRank = holding.Rank;
+                    bestHand = holding.HandStrength;
+                }
+                else if (holding.HandStrength == bestHand)
+                {
+                    bestIndex = (holding.Rank > bestRank) ? i : 
+                        (holding.Rank == bestRank) ? -1 : bestIndex;
+                }
             }
 
-            ulong popCount = this.GetPopCount(hand);            
+            return bestIndex;
+        }
+
+        public IHolding GetHolding(ulong board, ulong hand)
+        {
+            ulong originalHand = hand;
+            hand = this.AccountLowAces(board, hand);
+            ulong popCount = this.GetPopCount(hand);
+            int cardRank = -1;
+            int lowerKicker = -1;
+            int higherKicker = -1;
+            int flushRank = -1;
+            int straightRank = -1;
+            int wheelRank = -1;
+            int tripsRank = -1;
+            int[] pairRanks = new int[] { -1, -1, -1 };
+            IList<int> allRanks = new List<int>(7);
             int straightCards = 0;
-            int pairCount = 0;
-            bool hasTrips = false;
             int clubsCount = 0;
             int diamondsCount = 0;
             int heartsCount = 0;
             int spadesCount = 0;
+            int pairCount = 0;
+            bool hasTrips = false;
+            bool isWheel = false;
+            bool isStraight = false;
 
-            for (int i = 0; i < this.NibbleMasks.Length; i++)
+            ulong straightFlush = hand & (hand >> 4) & (hand >> 8) & (hand >> 12) & (hand >> 16);
+
+            if (straightFlush != 0)
             {
-                ulong mask = (popCount & this.NibbleMasks[i]);
+                return new Holding(HandStrength.StraightFlush, this.GetStraightFlushRank(straightFlush));
+            }
+
+            for (int rank = 0; rank < this.NibbleMasks.Length; rank++)
+            {
+                ulong mask = (popCount & this.NibbleMasks[rank]);
 
                 if (mask == 0)
                 {
                     if (straightCards >= 5)
                     {
-                        break;
+                        isStraight = true;
+                        straightRank = isStraight ? rank : straightRank;
+                        isWheel = isWheel ? true : (isStraight && rank == 4);
+                        wheelRank = (isWheel && isStraight) ? rank : wheelRank;
                     }
-
+                   
                     straightCards = 0;
 
                     continue;
                 }
 
-                bool isLowNibble = (i == 0);
-
-                if (!isLowNibble)
+                if (mask == this.QuadsMasks[rank])
                 {
-                    ulong nibble = (hand >> i * 4) & this.NibbleMasks[0];
-                    clubsCount = ((nibble & this.FlushMasks[0]) != 0) ? clubsCount + 1 : clubsCount;
-                    diamondsCount = ((nibble & this.FlushMasks[1]) != 0) ? diamondsCount + 1 : diamondsCount;
-                    heartsCount = ((nibble & this.FlushMasks[2]) != 0) ? heartsCount + 1 : heartsCount;
-                    spadesCount = ((nibble & this.FlushMasks[3]) != 0) ? spadesCount + 1 : spadesCount;
+                    return new Holding(HandStrength.FourOfAKind, rank + cardRank);
+                }
+
+                if (straightCards >= 5)
+                {
+                    isStraight = true;
+                    straightRank = isStraight ? rank : straightRank;
+                    isWheel = isWheel ? true : (isStraight && rank == 4);
+                    wheelRank = (isWheel && isStraight) ? rank : wheelRank;
                 }
 
                 straightCards++;
+                cardRank = rank;
+                higherKicker = (lowerKicker != -1) ? ((originalHand & this.NibbleMasks[rank]) != 0) ? rank : -1 : higherKicker;
+                lowerKicker = (lowerKicker == -1) ? ((originalHand & this.NibbleMasks[rank]) != 0) ? rank : -1 : lowerKicker;
+                bool isLowNibble = (rank == 0);                
 
-                if (mask == this.QuadsMasks[i])
+                if (!isLowNibble)
                 {
-                    return Hand.FourOfAKind;
+                    ulong nibble = (hand >> rank * 4) & this.NibbleMasks[0];
+                    int club = ((nibble & this.FlushMasks[0]) != 0) ? 1 : 0;
+                    int diamond = ((nibble & this.FlushMasks[1]) != 0) ? 1 : 0;
+                    int heart = ((nibble & this.FlushMasks[2]) != 0) ? 1 : 0;
+                    int spade = ((nibble & this.FlushMasks[3]) != 0) ? 1 : 0;
+                    bool clubsChanged = (clubsCount + club != clubsCount && clubsCount + club >= 5);
+                    bool diamondsChanged = (diamondsCount + diamond != diamondsCount && diamondsCount + diamond >= 5);
+                    bool heartsChanged = (heartsCount + heart != heartsCount && heartsCount + heart >= 5);
+                    bool spadesChanged = (spadesCount + spade != spadesCount && spadesCount + spade >= 5);
+
+                    if (clubsChanged || diamondsChanged || heartsChanged || spadesChanged)
+                    {
+                        flushRank = rank;
+                    }
+
+                    clubsCount += club;
+                    diamondsCount += diamond;
+                    heartsCount += heart;
+                    spadesCount += spade;
+
+                    allRanks.Add(rank);
                 }
 
-                if (mask == this.TripsMasks[i])
+                if (mask == this.TripsMasks[rank])
                 {
                     hasTrips = true;
+                    tripsRank = rank;
 
                     continue;
                 }
 
-                if (mask == this.PairMasks[i] && !isLowNibble)
+                if (mask == this.PairMasks[rank] && !isLowNibble)
                 {
+                    pairRanks[pairCount] = rank;
                     pairCount++;
                 }
             }
+            Card HANDVE = (Card)(originalHand | board);
+            straightRank = isWheel ? wheelRank : straightRank;
+            int[] orderedPairRanks = pairRanks.OrderByDescending(p => p).ToArray();
+            int[] bestRanks = allRanks.OrderByDescending(r => r).Take(5).ToArray();
 
-            bool hasFlush = (clubsCount >= 5 || diamondsCount >= 5 || heartsCount >= 5 || spadesCount >= 5);
-            bool hasStraight = (straightCards >= 5);
-
-            return this.GetPairBasedHand(pairCount, hasFlush, hasStraight, hasTrips);
+            return this.GetHandStrength(
+                hand, 
+                popCount,
+                bestRanks,
+                cardRank,
+                lowerKicker,
+                higherKicker,
+                flushRank, 
+                straightRank, 
+                tripsRank,
+                orderedPairRanks[0],
+                orderedPairRanks[1],
+                pairCount, 
+                hasTrips);
         }
 
-        private ulong ParseHand(ulong board, ulong holding)
+        private ulong AccountLowAces(ulong board, ulong hand)
         {
-            ulong hand = board | holding;
-            ulong acesMask = hand & this.NibbleMasks[MasksLength];
+            hand |= board;
+            int masksLength = 13;
+            ulong acesMask = hand & this.NibbleMasks[masksLength];
             ulong lowNibble = (acesMask >> 52);
             hand |= lowNibble;
 
@@ -178,44 +257,80 @@ namespace BNQ.Brain
             return popCount;
         }
 
-        private Hand GetPairBasedHand(int pairCount, bool hasFlush, bool hasStraight, bool hasTrips)
+        public int GetStraightFlushRank(ulong hand)
         {
+            ulong n = 1;
+
+            if ((hand >> 32) == 0) { n = n + 32; hand = hand << 32; }
+            if ((hand >> 48) == 0) { n = n + 16; hand = hand << 16; }
+            if ((hand >> 56) == 0) { n = n + 8; hand = hand << 8; }
+            if ((hand >> 60) == 0) { n = n + 4; hand = hand << 4; }
+            if ((hand >> 62) == 0) { n = n + 2; hand = hand << 2; }
+            n = n - (hand >> 63);
+
+            return (int)(63 - n);
+        }
+
+        private IHolding GetHandStrength(
+            ulong hand, 
+            ulong popCount,
+            int[] bestRanks,
+            int cardRank,
+            int lowerKicker,
+            int higherKicker,
+            int flushRank,
+            int straightRank,
+            int tripsRank,
+            int pairRank,
+            int secondPairRank,
+            int pairCount,
+            bool hasTrips)
+        {
+            bool hasFlush = (flushRank != -1);
+            bool hasStraight = (straightRank != -1);
+
             switch (pairCount)
             {
                 case 0:
                     if (hasFlush)
                     {
-                        return Hand.Flush;
+                        return new Holding(HandStrength.Flush, flushRank);
                     }
 
                     if (hasStraight)
                     {
-                        return Hand.Straight;
+                        return new Holding(HandStrength.Straight, straightRank);
                     }
 
-                    return hasTrips ? Hand.ThreeOfAKind : Hand.HighCard;
+                    return hasTrips ? 
+                        new Holding(HandStrength.ThreeOfAKind, tripsRank + cardRank) : 
+                        new Holding(HandStrength.HighCard, cardRank);
                 case 1:
                 case 2:
                 case 3:
                     if (hasTrips)
                     {
-                        return Hand.FullHouse;
+                        return new Holding(HandStrength.FullHouse, tripsRank + pairRank);
                     }
 
                     if (hasFlush)
                     {
-                        return Hand.Flush;
+                        return new Holding(HandStrength.Flush, flushRank);
                     }
 
                     if (hasStraight)
                     {
-                        return Hand.Straight;
+                        return new Holding(HandStrength.Straight, straightRank);
                     }
 
-                    return (pairCount == 1) ? Hand.OnePair : Hand.TwoPair;
+                    return (pairCount == 1) ? 
+                        new Holding(HandStrength.OnePair, pairRank + 
+                            (bestRanks.All(r => r > higherKicker) ? 0 : 
+                            (int)(Math.Pow(2, higherKicker) + Math.Pow(2, lowerKicker)))) : 
+                        new Holding(HandStrength.TwoPair, pairRank + secondPairRank + cardRank);
             }
 
-            return Hand.HighCard;
+            return new Holding(HandStrength.HighCard, cardRank);
         }
     }
 }
