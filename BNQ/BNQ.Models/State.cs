@@ -7,6 +7,7 @@ namespace BNQ.Models
     public class State
     {
         private ulong board;
+        private double villainRange;
         private double spr;
         private double stack;
         private double pot;
@@ -14,9 +15,10 @@ namespace BNQ.Models
         private StateType type;
         private ICollection<Act> actions;
 
-        public State(ulong board, double spr, double wager, StateType type, ICollection<Act> actions)
+        public State(ulong board, double villainRange, double spr, double wager, StateType type, ICollection<Act> actions)
         {
             this.board = board;
+            this.villainRange = villainRange;
             this.spr = this.NormalizeSpr(spr);
             this.stack = spr * 3;
             this.pot = this.stack / this.spr;
@@ -30,6 +32,14 @@ namespace BNQ.Models
             get
             {
                 return this.board;
+            }
+        }
+
+        public double VillainRange
+        {
+            get
+            {
+                return (this.villainRange == 0.0) ? 1.0 : this.villainRange;
             }
         }
 

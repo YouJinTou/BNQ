@@ -2,13 +2,23 @@
 {
     public struct Holding : IHolding
     {
+        private ulong hand;
         private HandStrength handStrength;
         private int rank;
 
-        public Holding(HandStrength handStrength, int rank)
+        public Holding(ulong hand, HandStrength handStrength, int rank)
         {
+            this.hand = hand;
             this.handStrength = handStrength;
             this.rank = rank;
+        }
+
+        public ulong Hand
+        {
+            get
+            {
+                return this.hand;
+            }
         }
 
         public HandStrength HandStrength

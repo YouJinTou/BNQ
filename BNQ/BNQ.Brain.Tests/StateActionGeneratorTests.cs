@@ -13,7 +13,7 @@ namespace BNQ.Brain.Tests
         {
             var flop = new Card[] { Card.dA, Card.hK, Card.sQ };
             var board = new Board(flop);
-            var state = new State(board.Cards, 100, 1.5, 0, null);
+            var state = new State(board.Cards, 0.0, 100, 1.5, 0, null);
 
             return state;
         }

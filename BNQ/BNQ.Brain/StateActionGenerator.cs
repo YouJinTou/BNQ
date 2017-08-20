@@ -6,12 +6,12 @@ namespace BNQ.Brain
 {
     public class StateActionGenerator : IStateActionGenerator
     {
-        private State inputState;
+        private State inState;
         private IPlayer hero;
 
         public StateActionGenerator(State inputState, IPlayer hero)
         {
-            this.inputState = inputState;
+            this.inState = inputState;
             this.hero = hero;            
         }
 
@@ -33,12 +33,12 @@ namespace BNQ.Brain
             for (int spr = 0; spr < sprs.Length; spr++)
             {
                 State nextState = new State(
-                    this.inputState.Board, sprs[spr], this.inputState.Wager, StateType.Alive, allActions);
+                    this.inState.Board, this.inState.VillainRange, sprs[spr], this.inState.Wager, StateType.Alive, allActions);
 
                 this.GetStateActionPairOnBoard(pairs, nextState, allActions);
             }
 
-            int cardsSoFar = Helper.GetDealtCardsCount(this.inputState.Board);
+            int cardsSoFar = Helper.GetDealtCardsCount(this.inState.Board);
             int river = 5;
             bool isFlop = (cardsSoFar == 3);
             bool isRiver = (cardsSoFar == river);
@@ -48,16 +48,16 @@ namespace BNQ.Brain
                 return pairs;
             }
 
-            ICollection<ulong> possibleCards = this.GetPossibleCards(this.inputState.Board);            
+            ICollection<ulong> possibleCards = this.GetPossibleCards(this.inState.Board);            
 
             foreach (ulong card in possibleCards)
             {
-                ulong nextBoard = this.inputState.Board | card;
+                ulong nextBoard = this.inState.Board | card;
 
                 for (int spr = 0; spr < sprs.Length; spr++)
                 {
                     State nextState = new State(
-                        nextBoard, sprs[spr], this.inputState.Wager, StateType.Alive, allActions);
+                        nextBoard, this.inState.VillainRange, sprs[spr], this.inState.Wager, StateType.Alive, allActions);
 
                     this.GetStateActionPairOnBoard(pairs, nextState, allActions);
                 }
@@ -73,7 +73,7 @@ namespace BNQ.Brain
                         for (int spr = 0; spr < sprs.Length; spr++)
                         {
                             State riverState = new State(
-                                riverBoard, sprs[spr], this.inputState.Wager, StateType.Alive, allActions);
+                                riverBoard, this.inState.VillainRange, sprs[spr], this.inState.Wager, StateType.Alive, allActions);
 
                             this.GetStateActionPairOnBoard(pairs, riverState, allActions);
                         }
@@ -106,7 +106,7 @@ namespace BNQ.Brain
         {
             IList<double> sprs = new List<double> { 0.5, 1, 2, 4, 8, 13, 20, 30 };
             IList<double> result = new List<double>();
-            double maxSpr = this.inputState.Spr;
+            double maxSpr = this.inState.Spr;
 
             foreach (double spr in sprs)
             {

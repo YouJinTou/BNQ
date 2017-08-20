@@ -2,8 +2,10 @@
 
 namespace BNQ.Brain
 {
-    internal interface IEvaluator
+    public interface IEvaluator
     {
+        int Evaluate(ulong board, ulong[] hands);
+
         IHolding GetHolding(ulong board, ulong hand);
     }
 }

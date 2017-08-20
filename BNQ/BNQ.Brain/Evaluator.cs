@@ -122,7 +122,7 @@ namespace BNQ.Brain
             int wheelRank = -1;
             int tripsRank = -1;
             int[] pairRanks = new int[] { -1, -1, -1 };
-            IList<int> allRanks = new List<int>(7);
+            Stack<int> allRanks = new Stack<int>();
             int straightCards = 0;
             int clubsCount = 0;
             int diamondsCount = 0;
@@ -137,7 +137,7 @@ namespace BNQ.Brain
 
             if (straightFlush != 0)
             {
-                return new Holding(HandStrength.StraightFlush, this.GetStraightFlushRank(straightFlush));
+                return new Holding(originalHand, HandStrength.StraightFlush, this.GetStraightFlushRank(straightFlush));
             }
 
             for (int rank = 0; rank < this.NibbleMasks.Length; rank++)
@@ -161,7 +161,7 @@ namespace BNQ.Brain
 
                 if (mask == this.QuadsMasks[rank])
                 {
-                    return new Holding(HandStrength.FourOfAKind, rank + cardRank);
+                    return new Holding(originalHand, HandStrength.FourOfAKind, rank + cardRank);
                 }
 
                 if (straightCards >= 5)
@@ -200,7 +200,7 @@ namespace BNQ.Brain
                     heartsCount += heart;
                     spadesCount += spade;
 
-                    allRanks.Add(rank);
+                    allRanks.Push(rank);
                 }
 
                 if (mask == this.TripsMasks[rank])
@@ -217,12 +217,18 @@ namespace BNQ.Brain
                     pairCount++;
                 }
             }
-            Card HANDVE = (Card)(originalHand | board);
+
             straightRank = isWheel ? wheelRank : straightRank;
             int[] orderedPairRanks = pairRanks.OrderByDescending(p => p).ToArray();
-            int[] bestRanks = allRanks.OrderByDescending(r => r).Take(5).ToArray();
+            int[] bestRanks = new int[5];
+
+            for (int i = 0; i < allRanks.Count; i++)
+            {
+                bestRanks[i] = allRanks.Pop();
+            }
 
             return this.GetHandStrength(
+                originalHand,
                 hand, 
                 popCount,
                 bestRanks,
@@ -272,6 +278,7 @@ namespace BNQ.Brain
         }
 
         private IHolding GetHandStrength(
+            ulong originalHand,
             ulong hand, 
             ulong popCount,
             int[] bestRanks,
@@ -294,43 +301,43 @@ namespace BNQ.Brain
                 case 0:
                     if (hasFlush)
                     {
-                        return new Holding(HandStrength.Flush, flushRank);
+                        return new Holding(originalHand, HandStrength.Flush, flushRank);
                     }
 
                     if (hasStraight)
                     {
-                        return new Holding(HandStrength.Straight, straightRank);
+                        return new Holding(originalHand, HandStrength.Straight, straightRank);
                     }
 
                     return hasTrips ? 
-                        new Holding(HandStrength.ThreeOfAKind, tripsRank + cardRank) : 
-                        new Holding(HandStrength.HighCard, cardRank);
+                        new Holding(originalHand, HandStrength.ThreeOfAKind, tripsRank + cardRank) : 
+                        new Holding(originalHand, HandStrength.HighCard, cardRank);
                 case 1:
                 case 2:
                 case 3:
                     if (hasTrips)
                     {
-                        return new Holding(HandStrength.FullHouse, tripsRank + pairRank);
+                        return new Holding(originalHand, HandStrength.FullHouse, tripsRank + pairRank);
                     }
 
                     if (hasFlush)
                     {
-                        return new Holding(HandStrength.Flush, flushRank);
+                        return new Holding(originalHand, HandStrength.Flush, flushRank);
                     }
 
                     if (hasStraight)
                     {
-                        return new Holding(HandStrength.Straight, straightRank);
+                        return new Holding(originalHand, HandStrength.Straight, straightRank);
                     }
 
                     return (pairCount == 1) ? 
-                        new Holding(HandStrength.OnePair, pairRank + 
+                        new Holding(originalHand, HandStrength.OnePair, pairRank + 
                             (bestRanks.All(r => r > higherKicker) ? 0 : 
                             (int)(Math.Pow(2, higherKicker) + Math.Pow(2, lowerKicker)))) : 
-                        new Holding(HandStrength.TwoPair, pairRank + secondPairRank + cardRank);
+                        new Holding(originalHand, HandStrength.TwoPair, pairRank + secondPairRank + cardRank);
             }
 
-            return new Holding(HandStrength.HighCard, cardRank);
+            return new Holding(originalHand, HandStrength.HighCard, cardRank);
         }
     }
 }

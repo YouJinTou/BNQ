@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,11 +48,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Storage\HandPercentages.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BNQ.Brain\BNQ.Brain.csproj">
       <Project>{f6615f03-ec69-4c5a-8feb-6e6522d9523f}</Project>
       <Name>BNQ.Brain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BNQ.IO\BNQ.IO.csproj">
+      <Project>{0e39b022-0be1-44ab-89a0-fbcef63cceb4}</Project>
+      <Name>BNQ.IO</Name>
     </ProjectReference>
     <ProjectReference Include="..\BNQ.Models\BNQ.Models.csproj">
       <Project>{59660e51-7367-4732-8de3-e0de66649ac8}</Project>
