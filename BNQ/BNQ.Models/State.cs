@@ -7,24 +7,32 @@ namespace BNQ.Models
     public class State
     {
         private ulong board;
+        private double pot;
+        private double stack;
         private double villainRange;
         private double spr;
-        private double stack;
-        private double pot;
         private double wager;
         private StateType type;
         private ICollection<Act> actions;
 
-        public State(ulong board, double villainRange, double spr, double wager, StateType type, ICollection<Act> actions)
+        public State(ulong board, double pot, double stack, double villainRange, double wager, StateType type, ICollection<Act> actions)
         {
             this.board = board;
+            this.pot = pot;
+            this.stack = stack;
             this.villainRange = villainRange;
-            this.spr = this.NormalizeSpr(spr);
-            this.stack = spr * 3;
-            this.pot = this.stack / this.spr;
+            this.spr = this.NormalizeSpr(stack / pot);
             this.wager = wager;
             this.type = type;
             this.actions = actions;
+        }
+
+        public void SetPot(double wager, bool heroWagering)
+        {
+            this.pot += wager;
+            this.stack = heroWagering ? this.stack - wager : this.stack;
+
+            this.NormalizeSpr(this.pot / this.stack);
         }
 
         public ulong Board
@@ -32,6 +40,18 @@ namespace BNQ.Models
             get
             {
                 return this.board;
+            }
+            set
+            {
+                this.board = value;
+            }
+        }
+
+        public double Pot
+        {
+            get
+            {
+                return this.pot;
             }
         }
 
@@ -49,6 +69,10 @@ namespace BNQ.Models
             {
                 return this.wager;
             }
+            set
+            {
+                this.wager = value;
+            }
         }
 
         public StateType Type
@@ -57,6 +81,10 @@ namespace BNQ.Models
             {
                 return this.type;
             }
+            set
+            {
+                this.type = value;
+            }
         }
 
         public ICollection<Act> Actions
@@ -64,6 +92,10 @@ namespace BNQ.Models
             get
             {
                 return this.actions;
+            }
+            set
+            {
+                this.actions = value;
             }
         }
 
@@ -80,14 +112,6 @@ namespace BNQ.Models
             get
             {
                 return this.stack;
-            }
-        }
-
-        public double Pot
-        {
-            get
-            {
-                return this.pot;
             }
         }
 

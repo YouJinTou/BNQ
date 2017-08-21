@@ -5,7 +5,7 @@ namespace BNQ.IO.Tests
     [TestFixture]
     public class PrecomputedValuesLoaderTests
     {
-        private const string StoragePath = @"C:\Self\Programming\Projects\BNQ\trunk\BNQ\BNQ.IO.Tests\Storage\";
+        private const string StoragePath = @"D:\SVN\BNQ\trunk\BNQ\BNQ.Playground\Storage";
 
         [TestCase(1326)]
         public void PrecomputedValuesLoader_LoadAndParsePreflopRanges_ValidTotalCount(int totalCombos)

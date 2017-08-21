@@ -12,7 +12,7 @@ namespace BNQ.Brain
         public StateActionGenerator(State inputState, IPlayer hero)
         {
             this.inState = inputState;
-            this.hero = hero;            
+            this.hero = hero;
         }
 
         public IDictionary<StateActionPair, double> GeneratePairs()
@@ -30,17 +30,34 @@ namespace BNQ.Brain
                 Action.None
             };
 
+            State currentState = new State(
+                    this.inState.Board,
+                    this.inState.Pot,
+                    this.inState.Stack,
+                    this.inState.VillainRange,
+                    this.inState.Wager,
+                    StateType.Alive,
+                    allActions);
+            this.GetStateActionPairOnBoard(pairs, currentState, allActions);
+
             for (int spr = 0; spr < sprs.Length; spr++)
             {
+                double pot = 1;
+                double stack = sprs[spr] * pot;
                 State nextState = new State(
-                    this.inState.Board, this.inState.VillainRange, sprs[spr], this.inState.Wager, StateType.Alive, allActions);
+                    this.inState.Board,
+                    pot,
+                    stack, 
+                    this.inState.VillainRange, 
+                    this.inState.Wager, 
+                    StateType.Alive, 
+                    allActions);
 
                 this.GetStateActionPairOnBoard(pairs, nextState, allActions);
             }
 
             int cardsSoFar = Helper.GetDealtCardsCount(this.inState.Board);
             int river = 5;
-            bool isFlop = (cardsSoFar == 3);
             bool isRiver = (cardsSoFar == river);
 
             if (isRiver)
@@ -48,38 +65,49 @@ namespace BNQ.Brain
                 return pairs;
             }
 
-            ICollection<ulong> possibleCards = this.GetPossibleCards(this.inState.Board);            
+            ICollection<ulong> possibleCards = this.GetPossibleCards(this.inState.Board);
 
             foreach (ulong card in possibleCards)
             {
-                ulong nextBoard = this.inState.Board | card;
+                ulong turnBoard = this.inState.Board | card;
 
                 for (int spr = 0; spr < sprs.Length; spr++)
                 {
+                    double pot = 1;
+                    double stack = sprs[spr] * pot;
                     State nextState = new State(
-                        nextBoard, this.inState.VillainRange, sprs[spr], this.inState.Wager, StateType.Alive, allActions);
+                        turnBoard, 
+                        pot, 
+                        stack, 
+                        this.inState.VillainRange, 
+                        this.inState.Wager, 
+                        StateType.Alive, 
+                        allActions);
 
                     this.GetStateActionPairOnBoard(pairs, nextState, allActions);
                 }
 
-                if (isFlop)
+                ICollection<ulong> possibleRiverCards = this.GetPossibleCards(turnBoard);
+
+                foreach (ulong riverCard in possibleRiverCards)
                 {
-                    ICollection<ulong> possibleRiverCards = this.GetPossibleCards(nextBoard);
+                    ulong riverBoard = turnBoard | riverCard;
 
-                    foreach (ulong riverCard in possibleRiverCards)
+                    for (int spr = 0; spr < sprs.Length; spr++)
                     {
-                        ulong riverBoard = nextBoard | riverCard;
+                        double pot = 1;
+                        double stack = sprs[spr] * pot;
+                        State riverState = new State(
+                            riverBoard, 
+                            pot, 
+                            stack, 
+                            this.inState.VillainRange, 
+                            this.inState.Wager, 
+                            StateType.Alive, 
+                            allActions);
 
-                        for (int spr = 0; spr < sprs.Length; spr++)
-                        {
-                            State riverState = new State(
-                                riverBoard, this.inState.VillainRange, sprs[spr], this.inState.Wager, StateType.Alive, allActions);
-
-                            this.GetStateActionPairOnBoard(pairs, riverState, allActions);
-                        }
+                        this.GetStateActionPairOnBoard(pairs, riverState, allActions);
                     }
-
-                    isFlop = false;
                 }
             }
 
@@ -96,7 +124,10 @@ namespace BNQ.Brain
                 Action action = actions[a];
                 StateActionPair pair = new StateActionPair(state, action);
 
-                pairs.Add(pair, stateActionValue);
+                if (!pairs.ContainsKey(pair))
+                {
+                    pairs.Add(pair, stateActionValue);
+                }
             }
 
             return pairs;
@@ -123,9 +154,8 @@ namespace BNQ.Brain
         {
             ICollection<ulong> cards = new HashSet<ulong>();
             ICollection<ulong> dealtCards = this.GetDealtCards(board);
-            ulong lastCard = 36028797018963968;
 
-            for (ulong card = 1; card <= lastCard; card *= 2)
+            for (ulong card = (ulong)Card.c2; card <= (ulong)Card.sA; card = card << 1)
             {
                 if (!dealtCards.Contains(card))
                 {
@@ -144,7 +174,7 @@ namespace BNQ.Brain
                 (ulong)this.hero.Hands[0].Second
             };
 
-            for (int i = 0; i < 64; i++)
+            for (int i = 0; i < 54; i++)
             {
                 ulong bitCard = (board & ((ulong)1 << i));
 
