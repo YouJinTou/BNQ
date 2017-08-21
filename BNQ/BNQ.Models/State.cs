@@ -23,16 +23,8 @@ namespace BNQ.Models
             this.villainRange = villainRange;
             this.spr = this.NormalizeSpr(stack / pot);
             this.wager = wager;
-            this.type = type;
-            this.actions = actions;
-        }
-
-        public void SetPot(double wager, bool heroWagering)
-        {
-            this.pot += wager;
-            this.stack = heroWagering ? this.stack - wager : this.stack;
-
-            this.NormalizeSpr(this.pot / this.stack);
+            this.type = (this.spr <= 0.5) ? StateType.AllIn : type;
+            this.actions = (this.type == StateType.AllIn) ? new HashSet<Act> { Act.None } : actions;
         }
 
         public ulong Board
@@ -68,10 +60,6 @@ namespace BNQ.Models
             get
             {
                 return this.wager;
-            }
-            set
-            {
-                this.wager = value;
             }
         }
 

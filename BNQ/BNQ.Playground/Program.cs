@@ -18,7 +18,7 @@ namespace BNQ.Playground
             var valuesLoader = new PrecomputedValuesLoader(storagePath);
             var rangeGenerator = new RangeGenerator(valuesLoader);
             var actions = new Act[] { Act.Call, Act.Fold, Act.Raise50 };
-            var hand = new IHand[] { new Hand(Card.sT, Card.cT) };
+            var hand = new IHand[] { new Hand(Card.dA, Card.dK) };
             var hero = new Player(hand, actions);            
 
             rangeGenerator.UpdateRange(Act.Raise50, Act.None, Position.MP);
@@ -28,7 +28,7 @@ namespace BNQ.Playground
             var stateActionPairs = stateActionGenerator.GeneratePairs();
             var evaluator = new Evaluator();
             var sarsa = new Sarsa(state, true, (ulong)(Card.sT | Card.cT), 
-                rangeGenerator.GenerateHands(), stateActionPairs, evaluator, 0.01, 1, TimeSpan.FromSeconds(10));
+                rangeGenerator.GenerateHands(), stateActionPairs, evaluator, 0.001, 1, TimeSpan.FromSeconds(10));
             var actionValues = sarsa.GetBestAction();
 
             //var sw = new Stopwatch();

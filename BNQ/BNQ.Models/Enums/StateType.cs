@@ -5,8 +5,10 @@
         Alive,
         VillainFolded,
         HeroFolded,
+        Called,
         CalledFinal,
         Checked,
-        CheckedFinal
+        CheckedFinal,
+        AllIn
     }
 }

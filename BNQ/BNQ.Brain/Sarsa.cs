@@ -75,7 +75,7 @@ namespace BNQ.Brain
                     double reward;
                     State nextState = this.GetNextState(state, action, out reward);
 
-                    if (nextState.Actions.Contains(Act.None))
+                    if (action == Act.None)
                     {
                         this.stateActionPairs[stateAction.Key] = stateAction.Value +
                             alpha * (reward + gamma * 0.0 - stateAction.Value);
@@ -88,7 +88,7 @@ namespace BNQ.Brain
                     KeyValuePair<StateActionPair, double> nextStateAction = this.GetStateAction(nextState);
 
                     this.stateActionPairs[stateAction.Key] = stateAction.Value + 
-                        alpha * (reward + gamma * 0.0 - stateAction.Value);
+                        alpha * (reward + gamma * nextStateAction.Value - stateAction.Value);
 
                     if (nextState.Type == StateType.HeroFolded ||
                         nextState.Type == StateType.VillainFolded ||
@@ -108,9 +108,7 @@ namespace BNQ.Brain
                 }
             }
 
-            var x = this.stateActionPairs.Where(sap => sap.Value != 0).ToList();
-
-            Console.WriteLine("Total " + total);
+            Console.WriteLine("Total steps: " + total);
         }
 
         private KeyValuePair<StateActionPair, double> GetStateAction(State state)
@@ -143,13 +141,13 @@ namespace BNQ.Brain
             for (int i = 0; i < pairs.Length; i++)
             {
                 StateActionPair stateAction = new StateActionPair(state, pairs[i].Key.Action);
+                stateAction.State.Type = pairs[i].Key.State.Type;
+                stateAction.Action = pairs[i].Key.Action;
 
                 this.stateActionPairs.Remove(pairs[i].Key);
+                this.stateActionPairs.Add(stateAction, pairs[i].Value);
 
-                if (!this.stateActionPairs.ContainsKey(pairs[i].Key))
-                {
-                    this.stateActionPairs.Add(stateAction, pairs[i].Value);
-                }
+                pairs[i] = new KeyValuePair<StateActionPair, double>(stateAction, pairs[i].Value);
             }
 
             return pairs;
@@ -164,71 +162,99 @@ namespace BNQ.Brain
                         Act[] villainActions = new Act[] { Act.Call, Act.Fold, Act.Raise50 };
                         Act action = this.GetRandomAction(villainActions);
                         double bet = currentState.Pot / 2;
+                        double newPot = currentState.Pot + bet;
+                        double newStack = currentState.Stack - bet;
+                        State newCurrentState = new State(
+                            currentState.Board, 
+                            newPot,
+                            newStack, 
+                            currentState.VillainRange, 
+                            bet,
+                            StateType.Alive,
+                            villainActions);
+                        State nextState = this.GetStateAfterVillainAction(newCurrentState, action);
+                        reward = this.GetReward(nextState, bet);
 
-                        currentState.SetPot(bet, true);
-
-                        State state = this.GetStateAfterVillainAction(currentState, action, bet);
-                        reward = this.GetReward(state, bet);
-
-                        return state;
+                        return nextState;
                     }
                 case Act.Call:
                     {
                         if (Helper.IsRiver(currentState.Board))
                         {
-                            currentState.SetPot(currentState.Wager, true);
-                            currentState.Type = StateType.CalledFinal;
-                            currentState.Actions = new HashSet<Act> { Act.None };
+                            State finalState = new State(
+                                currentState.Board,
+                                currentState.Pot + currentState.Wager,
+                                currentState.Stack - currentState.Wager,
+                                currentState.VillainRange,
+                                0.0,
+                                StateType.CalledFinal,
+                                new HashSet<Act> { Act.None });
+                            reward = this.GetReward(finalState, currentState.Wager);
 
-                            reward = this.GetReward(currentState, currentState.Wager);
-
-                            return currentState;
+                            return finalState;
                         }
 
                         Act[] villainActions = new Act[] { Act.Check, Act.Bet50 };
                         Act action = this.GetRandomAction(villainActions);
-                        State state = this.GetStateAfterVillainAction(currentState, action, 0.0);
-                        reward = this.GetReward(state, currentState.Wager);
+                        State newCurrentState = new State(
+                            this.GetNextBoard(currentState.Board),
+                            currentState.Pot + currentState.Wager,
+                            currentState.Stack - currentState.Wager,
+                            currentState.VillainRange,
+                            0.0,
+                            StateType.Called,
+                            villainActions);
+                        State nextState = this.GetStateAfterVillainAction(newCurrentState, action);
+                        reward = this.GetReward(nextState, currentState.Wager);
 
-                        return state;
+                        return nextState;
                     }
                 case Act.Check:
                     {
                         if (Helper.IsRiver(currentState.Board) && heroInPosition)
                         {
-                            currentState.Actions = new HashSet<Act> { Act.None };
-                            currentState.Type = StateType.CheckedFinal;
-                            reward = this.GetReward(currentState, 0.0);
+                            State finalState = new State(
+                                currentState.Board,
+                                currentState.Pot,
+                                currentState.Stack,
+                                currentState.VillainRange,
+                                0.0,
+                                StateType.CheckedFinal,
+                                new HashSet<Act> { Act.None });
+                            reward = this.GetReward(finalState, 0.0);
 
-                            return currentState;
+                            return finalState;
                         }
 
                         Act[] villainActions = new Act[] { Act.Check, Act.Bet50 };
                         Act action = this.GetRandomAction(villainActions);
-                        currentState.Actions = villainActions;
-                        currentState.Board = heroInPosition ? this.GetNextBoard(currentState.Board) : currentState.Board;
-                        currentState.Type = StateType.Checked;
-                        State state = this.GetStateAfterVillainAction(currentState, action, 0.0);
-                        reward = this.GetReward(state, 0.0);
+                        ulong newBoard = heroInPosition ? this.GetNextBoard(currentState.Board) : currentState.Board;
+                        State newCurrentState = new State(
+                            newBoard,
+                            currentState.Pot,
+                            currentState.Stack,
+                            currentState.VillainRange,
+                            0.0,
+                            StateType.Checked,
+                            villainActions);
+                        State nextState = this.GetStateAfterVillainAction(newCurrentState, action);
+                        reward = this.GetReward(nextState, 0.0);
 
-                        return state;
+                        return nextState;
                     }
                 case Act.Fold:
                     {
-                        currentState.Actions = new HashSet<Act> { Act.None };
-                        currentState.Type = StateType.HeroFolded;
-                        currentState.Wager = 0.0;
-                        reward = this.GetReward(currentState, 0.0);
+                        State finalState = new State(
+                            currentState.Board,
+                            currentState.Pot,
+                            currentState.Stack,
+                            currentState.VillainRange,
+                            0.0,
+                            StateType.HeroFolded,
+                            new HashSet<Act> { Act.None });
+                        reward = this.GetReward(finalState, 0.0);
 
-                        return state;
-                    }
-                case Act.None:
-                    {
-                        Act[] villainActions = new Act[] { Act.Bet50, Act.Check };
-                        Act action = this.GetRandomAction(villainActions);
-                        reward = 0.0;
-
-                        return this.GetStateAfterVillainAction(currentState, action, 0.0);
+                        return finalState;
                     }
                 case Act.Raise50:
                     {
@@ -236,14 +262,18 @@ namespace BNQ.Brain
                         Act action = this.GetRandomAction(villainActions);
                         double basePot = (currentState.Pot + 2 * currentState.Wager);
                         double raise = basePot / 2;
-                        currentState.Actions = villainActions;
-                        currentState.SetPot(raise, true);
-                        currentState.Type = StateType.Alive;
+                        State newCurrentState = new State(
+                            currentState.Board,
+                            currentState.Pot + raise,
+                            currentState.Stack - raise,
+                            currentState.VillainRange,
+                            raise,
+                            StateType.Alive,
+                            villainActions);
+                        State nextState = this.GetStateAfterVillainAction(newCurrentState, action);
+                        reward = this.GetReward(nextState, raise);
 
-                        State state = this.GetStateAfterVillainAction(currentState, action, raise);
-                        reward = this.GetReward(state, raise);
-
-                        return state;
+                        return nextState;
                     }
                 default:
                     reward = 0.0;
@@ -252,22 +282,15 @@ namespace BNQ.Brain
             }
         }
 
-        private Act GetRandomAction(Act[] availableActions)
-        {
-            int actionIndex = this.rng.Next(0, availableActions.Length);
-
-            return availableActions[actionIndex];
-        }
-
-        private State GetStateAfterVillainAction(
-            State heroState, Act villainAction, double heroWager)
+        private State GetStateAfterVillainAction(State heroState, Act villainAction)
         {
             ulong board = heroState.Board;
             double range = heroState.VillainRange;
             double spr = heroState.Spr;
             double pot = heroState.Pot;
             double stack = heroState.Stack;
-            double facingSize = (heroWager / (pot - heroWager));
+            double wager = heroState.Wager;
+            double wagerSizePercentage = (wager / (pot - wager));
 
             switch (villainAction)
             {
@@ -281,9 +304,9 @@ namespace BNQ.Brain
                     }
                 case Act.Call:
                     {
-                        double newPot = pot + heroWager;
+                        double newPot = pot + wager;
                         double defendByCallFrequency = 0.7;
-                        double newRange = this.RecalculateRange(defendByCallFrequency * facingSize, range);
+                        double newRange = this.RecalculateRange(defendByCallFrequency * wagerSizePercentage, range);
 
                         if (Helper.IsRiver(board))
                         {
@@ -298,9 +321,9 @@ namespace BNQ.Brain
                         }
 
                         ulong newBoard = this.GetNextBoard(board);
-                        ICollection<Act> actions = new HashSet<Act> { Act.Check, Act.Bet50 };
+                        ICollection<Act> actions = new HashSet<Act> { Act.Check, Act.Bet50 }; // ????????
 
-                        return new State(newBoard, newPot, stack, newRange, 0.0, StateType.Alive, actions);
+                        return new State(newBoard, newPot, stack, newRange, 0.0, StateType.Called, actions);
                     }
                 case Act.Check:
                     {
@@ -315,8 +338,9 @@ namespace BNQ.Brain
                         ICollection<Act> actions = new HashSet<Act> { Act.Check, Act.Bet50 };
                         double checkFrequency = 0.5;
                         double checkRange = this.RecalculateRange(0.0, checkFrequency * range);
+                        ulong newBoard = heroInPosition ? board : this.GetNextBoard(board);
 
-                        return new State(heroInPosition ? board : this.GetNextBoard(board), pot, stack, checkRange, 0.0, StateType.Checked, actions);
+                        return new State(newBoard, pot, stack, checkRange, 0.0, StateType.Checked, actions);
                     }
                 case Act.Fold:
                     {
@@ -324,11 +348,11 @@ namespace BNQ.Brain
                     }
                 case Act.Raise50:
                     {
-                        double basePot = (pot + 2 * heroWager);
+                        double basePot = (pot + 2 * wager);
                         double raise = basePot / 2;
                         double newPot = pot + raise;
                         double polarizationFactor = 1.5;
-                        double newRange = this.RecalculateRange(polarizationFactor * facingSize, range);
+                        double newRange = this.RecalculateRange(polarizationFactor * wagerSizePercentage, range);
                         ICollection<Act> actions = new HashSet<Act> { Act.Fold, Act.Call, Act.Raise50 };
 
                         return new State(board, newPot, stack, newRange, raise, StateType.Alive, actions);
@@ -336,6 +360,13 @@ namespace BNQ.Brain
                 default:
                     return null;
             }
+        }
+
+        private Act GetRandomAction(Act[] availableActions)
+        {
+            int actionIndex = this.rng.Next(0, availableActions.Length);
+
+            return availableActions[actionIndex];
         }
 
         private double RecalculateRange(double betSizePercent, double villainRange)
@@ -367,22 +398,51 @@ namespace BNQ.Brain
             return board |= card;
         }
 
+        private ulong GetFullBoard(ulong board)
+        {
+            ulong fullBoard = board;
+
+            while (this.GetBitsCount(fullBoard) < 5)
+            {
+                fullBoard = this.GetNextBoard(fullBoard);
+            }
+
+            return fullBoard;
+        }
+
+        private int GetBitsCount(ulong board)
+        {
+            int count = 0;
+
+            while (board != 0)
+            {
+                count++;
+                board &= board - 1;
+            }
+
+            return count;
+        }
+
         private double GetReward(State state, double amountRisked)
         {
             switch (state.Type)
             {
                 case StateType.Alive:
+                case StateType.Called:
                     return -amountRisked;
                 case StateType.CalledFinal:
                     return this.GetEvaluationReward(state, amountRisked);
                 case StateType.Checked:
+                case StateType.HeroFolded:
                     return 0.0;
                 case StateType.CheckedFinal:
                     return this.GetEvaluationReward(state, amountRisked);
                 case StateType.VillainFolded:
-                    return state.Pot;
-                case StateType.HeroFolded:
-                    return 0.0;
+                    return state.Pot;                
+                case StateType.AllIn:
+                    state.Board = this.GetFullBoard(state.Board);
+
+                    return this.GetEvaluationReward(state, amountRisked);
                 default:
                     return 0.0;
             }

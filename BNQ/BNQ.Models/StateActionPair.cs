@@ -25,6 +25,10 @@
             {
                 return this.action;
             }
+            set
+            {
+                this.action = value;
+            }
         }
     }
 }
