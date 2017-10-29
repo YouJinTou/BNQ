@@ -121,6 +121,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateType.h" />
+    <ClInclude Include="Street.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActionState.cpp" />
