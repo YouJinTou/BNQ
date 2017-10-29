@@ -31,6 +31,7 @@ private:
 private:
 	State* CurrentState() const;
 	State* NextState() const;
+	void SimulateRecursive(State& state);
 private:
 	std::shared_ptr<State> state;
 	int visits = 0;

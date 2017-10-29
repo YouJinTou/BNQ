@@ -72,7 +72,7 @@ Node Node::Expand()
 
 void Node::Simulate()
 {
-
+	SimulateRecursive(*CurrentState());
 }
 
 std::vector<Node>& Node::Children()
@@ -98,4 +98,14 @@ State* Node::CurrentState() const
 State* Node::NextState() const
 {
 	return CurrentState()->NextState().get();
+}
+
+void Node::SimulateRecursive(State& state)
+{
+	if (state.IsShowdown())
+	{
+		value = state.Value();
+
+		return;
+	}
 }
