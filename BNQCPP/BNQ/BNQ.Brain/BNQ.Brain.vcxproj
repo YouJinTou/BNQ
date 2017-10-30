@@ -113,24 +113,33 @@
   <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="ActionState.h" />
+    <ClInclude Include="Board.h" />
     <ClInclude Include="Card.h" />
+    <ClInclude Include="ChanceState.h" />
     <ClInclude Include="ChoiceState.h" />
+    <ClInclude Include="HeroStrategy.h" />
     <ClInclude Include="MCTS.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="OpponentState.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerStrategy.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateType.h" />
     <ClInclude Include="Street.h" />
+    <ClInclude Include="VillainStrategy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActionState.cpp" />
+    <ClCompile Include="Board.cpp" />
+    <ClCompile Include="ChanceState.cpp" />
     <ClCompile Include="ChoiceState.cpp" />
+    <ClCompile Include="HeroStrategy.cpp" />
     <ClCompile Include="MCTS.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="OpponentState.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="VillainStrategy.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
