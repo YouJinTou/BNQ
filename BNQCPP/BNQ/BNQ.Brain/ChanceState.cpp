@@ -1,7 +1,7 @@
 #include "ChanceState.h"
 
 ChanceState::ChanceState(std::shared_ptr<State> prevState) :
-	State(players, board, pot, seatToAct, street, facingBet, prevState)
+	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, prevState)
 {
 }
 

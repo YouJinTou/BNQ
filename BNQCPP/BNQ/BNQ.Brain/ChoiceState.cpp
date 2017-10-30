@@ -1,7 +1,7 @@
 #include "ChoiceState.h"
 
 ChoiceState::ChoiceState(std::shared_ptr<State> prevState, const std::vector<Action>& actions) :
-	State(players, board, pot, seatToAct, street, facingBet, prevState),
+	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, prevState),
 	actions(actions)
 {
 }

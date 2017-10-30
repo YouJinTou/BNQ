@@ -18,33 +18,43 @@ public:
 		Board& board,
 		double pot,
 		int seatToAct,
+		int lastBettor,
 		Street street,
-		double facingBet);
+		double wagerToCall);
 	State(std::vector<Player>& players,
 		Board& board,
 		double pot,
 		int seatToAct,
+		int lastBettor,
 		Street street,
-		double facingBet,
+		double wagerToCall,
 		std::shared_ptr<State> prevState);
 	virtual StateType Type() const = 0;
 	virtual std::shared_ptr<State> NextState() = 0;
 public:
-	std::vector<Player>& Players();
 	double Pot() const;
-	int SeatToAct() const;
+	Player& PlayerToAct();
 	Street CurrentStreet() const;
-	double FacingBet() const;
+	double WagerToCall() const;
+	bool FacingCheck() const;
 	bool IsFinal() const;
 	double Value() const;
 public:
 	State& operator=(const State& rhs);
+protected:
+	static constexpr int NoLastBettor = -1;
 protected:
 	std::shared_ptr<State> prevState;
 	std::vector<Player> players;
 	Board& board;
 	double pot;
 	int seatToAct;
+	int lastBettor;
 	Street street;
-	double facingBet;
+	double wagerToCall;
+	double value;
+protected:
+	std::vector<Player>& Players();
+	void SetValue();
+	const Player& NextToAct() const;
 };
