@@ -4,24 +4,34 @@
 
 State::State(
 	std::vector<Player>& players, 
-	int pot,
+	Board& board,
+	double pot,
 	int seatToAct,
-	Street street) :
+	Street street,
+	double facingBet) :
 	players(players),
-	pot(pot),
-	seatToAct(seatToAct),
-	street(street)
-{
-}
-
-State::State(std::vector<Player>& players, int pot,
-	int seatToAct,
-	Street street, 
-	std::shared_ptr<State> prevState) :
-	players(players),
+	board(board),
 	pot(pot),
 	seatToAct(seatToAct),
 	street(street),
+	facingBet(facingBet)
+{
+}
+
+State::State(
+	std::vector<Player>& players, 
+	Board& board,
+	double pot,
+	int seatToAct,
+	Street street, 
+	double facingBet,
+	std::shared_ptr<State> prevState) :
+	players(players),
+	board(board),
+	pot(pot),
+	seatToAct(seatToAct),
+	street(street),
+	facingBet(facingBet),
 	prevState(prevState)
 {
 }
@@ -31,7 +41,7 @@ std::vector<Player>& State::Players()
 	return players;
 }
 
-int State::Pot() const
+double State::Pot() const
 {
 	return pot;
 }
@@ -46,7 +56,12 @@ Street State::CurrentStreet() const
 	return street;
 }
 
-bool State::IsShowdown() const
+double State::FacingBet() const
+{
+	return facingBet;
+}
+
+bool State::IsFinal() const
 {
 	return false;
 }
