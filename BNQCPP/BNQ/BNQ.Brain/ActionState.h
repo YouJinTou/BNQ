@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Action.h"
 #include "State.h"
-#include "StateType.h"
-#include "Street.h"
 
 class ActionState : public State
 {

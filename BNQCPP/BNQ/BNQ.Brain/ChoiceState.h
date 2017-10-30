@@ -9,7 +9,7 @@
 class ChoiceState : public State
 {
 public:
-	ChoiceState(const State& prevState, const std::vector<Action>& actions);
+	ChoiceState(std::shared_ptr<State> prevState, const std::vector<Action>& actions);
 	std::vector<Action>& Actions();
 	std::shared_ptr<State> NextState();
 	StateType Type() const;

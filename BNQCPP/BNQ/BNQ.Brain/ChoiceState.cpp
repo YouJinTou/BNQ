@@ -1,7 +1,7 @@
 #include "ChoiceState.h"
 
-ChoiceState::ChoiceState(const State& prevState, const std::vector<Action>& actions) :
-	State(prevState),
+ChoiceState::ChoiceState(std::shared_ptr<State> prevState, const std::vector<Action>& actions) :
+	State(players, board, pot, seatToAct, street, facingBet, prevState),
 	actions(actions)
 {
 }
@@ -13,7 +13,9 @@ std::vector<Action>& ChoiceState::Actions()
 
 std::shared_ptr<State> ChoiceState::NextState()
 {
-	return std::make_shared<ActionState>();
+	//auto nextState = std::make_shared<ActionState>(std::make_shared<ChoiceState>(this), Action::Bet50);
+
+	return std::shared_ptr<State>();
 }
 
 StateType ChoiceState::Type() const

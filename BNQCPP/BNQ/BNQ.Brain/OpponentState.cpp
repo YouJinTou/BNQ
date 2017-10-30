@@ -1,12 +1,12 @@
 #include "OpponentState.h"
 
 OpponentState::OpponentState(std::vector<Player>& players) :
-	State(players, pot, seatToAct, street)
+	State(players, board, pot, seatToAct, street, facingBet)
 {
 }
 
 OpponentState::OpponentState(std::vector<Player>& players, std::shared_ptr<State> prevState) :
-	State(players, pot, seatToAct, street, prevState)
+	State(players, board, pot, seatToAct, street, facingBet, prevState)
 {
 }
 

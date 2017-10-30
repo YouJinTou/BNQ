@@ -2,7 +2,7 @@
 #include "OpponentState.h"
 
 ActionState::ActionState(std::shared_ptr<State> prevState, Action action) :
-	State(players, pot, seatToAct, street, prevState),
+	State(players, board, pot, seatToAct, street, facingBet, prevState),
 	action(action)
 {
 }
