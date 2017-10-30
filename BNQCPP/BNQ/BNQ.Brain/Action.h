@@ -2,8 +2,9 @@
 
 enum Action
 {
-	Fold,
-	Check,
 	Bet50,
+	Call,
+	Check,
+	Fold,
 	Raise50
 };
