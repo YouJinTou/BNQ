@@ -1,18 +1,26 @@
 #pragma once
 
+#include "Action.h"
 #include "Card.h"
 
 typedef unsigned long long Hand;
 
-struct Player
+class Player
 {
 public:
-	Player(int seat, int stack);
-	Player(int seat, int stack, bool isHero, Hand hand);
+	Player() = default;
+	Player(int seat, double stack);
+	Player(int seat, double stack, bool isHero, Hand hand);
+	int Seat() const;
+	double Stack() const;
 	bool IsHero() const;
+	Action LastAction() const;
+	void SetLastAction(Action action);
+	void SetStack(double wager);
 private:
 	int seat;
-	int stack;
+	double stack;
 	bool isHero;
 	Hand hand;
+	Action lastAction;
 };
