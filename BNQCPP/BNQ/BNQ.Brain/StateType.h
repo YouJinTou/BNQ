@@ -2,7 +2,8 @@
 
 enum StateType
 {
-	SingleAction,
+	Chance,
 	Choice,
-	Opponent
+	Opponent,
+	SingleAction,
 };
