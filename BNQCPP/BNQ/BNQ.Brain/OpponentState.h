@@ -8,7 +8,8 @@ class OpponentState : public State
 {
 public:
 	OpponentState(std::vector<Player>& players);
-	OpponentState(std::vector<Player>& players, std::shared_ptr<State> prevState);
+	OpponentState(
+		std::vector<Player>& players, std::shared_ptr<State> prevState, PlayerStrategy* strategy);
 	std::shared_ptr<State> NextState();
 	StateType Type() const;
 private:

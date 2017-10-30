@@ -1,5 +1,6 @@
 #include "HeroStrategy.h"
 #include "Node.h"
+#include "VillainStrategy.h"
 
 int Node::TotalVisits = 0;
 
@@ -49,18 +50,28 @@ Node Node::Expand()
 		throw std::logic_error("Cannot expand an already expanded node.");
 	}
 
-	switch (state->Type())
+	StateType stateType = state->Type();
+
+	switch (stateType)
 	{
+	case StateType::Chance:
+
+		break;
+	case StateType::Choice:
+		break;
+	case StateType::Final:
+		break;
 	case StateType::Opponent:
-	{
-	}
-	case StateType::SingleAction:
+	case StateType::HeroAction:
 	{
 		ChoiceState* choiceState = (ChoiceState*)NextState();
+		auto strategy = stateType == StateType::HeroAction ? 
+			std::unique_ptr<PlayerStrategy>{ std::make_unique<HeroStrategy>() } :
+			std::unique_ptr<PlayerStrategy>{ std::make_unique<VillainStrategy>() };
 
 		for (Action action : choiceState->Actions())
 		{
-			auto actionState = std::make_shared<ActionState>(state, &HeroStrategy());
+			auto actionState = std::make_shared<ActionState>(state, strategy.get());
 			Node child{ actionState };
 
 			children.emplace_back(child);

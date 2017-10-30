@@ -15,7 +15,7 @@ std::shared_ptr<State> ActionState::NextState()
 
 StateType ActionState::Type() const
 {
-	return StateType::SingleAction;
+	return StateType::HeroAction;
 }
 
 Action ActionState::GetAction()

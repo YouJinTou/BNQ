@@ -1,5 +1,6 @@
 #include "ActionState.h"
 #include "ChoiceState.h"
+#include "HeroStrategy.h"
 #include "OpponentState.h"
 
 OpponentState::OpponentState(std::vector<Player>& players) :
@@ -7,7 +8,8 @@ OpponentState::OpponentState(std::vector<Player>& players) :
 {
 }
 
-OpponentState::OpponentState(std::vector<Player>& players, std::shared_ptr<State> prevState) :
+OpponentState::OpponentState(
+	std::vector<Player>& players, std::shared_ptr<State> prevState, PlayerStrategy* strategy) :
 	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, prevState)
 {
 }
@@ -16,7 +18,8 @@ std::shared_ptr<State> OpponentState::NextState()
 {
 	if (NextToAct().IsHero())
 	{
-		return std::shared_ptr<State>();
+		return std::make_shared<ActionState>(
+			std::make_shared<OpponentState>(*this), &HeroStrategy());
 	}
 
 	return std::shared_ptr<ChoiceState>();
