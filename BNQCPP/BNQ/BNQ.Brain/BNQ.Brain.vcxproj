@@ -124,6 +124,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerStrategy.h" />
     <ClInclude Include="FinalState.h" />
+    <ClInclude Include="Position.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateType.h" />
     <ClInclude Include="Street.h" />

@@ -10,8 +10,8 @@ State::State(
 	std::vector<Player>& players, 
 	Board& board,
 	double pot,
-	int seatToAct,
-	int lastBettor,
+	Position seatToAct,
+	Position lastBettor,
 	Street street,
 	double wagerToCall) :
 	players(players),
@@ -28,8 +28,8 @@ State::State(
 	std::vector<Player>& players, 
 	Board& board,
 	double pot,
-	int seatToAct,
-	int lastBettor,
+	Position seatToAct,
+	Position lastBettor,
 	Street street,
 	double wagerToCall,
 	std::shared_ptr<State> prevState) :
@@ -58,7 +58,7 @@ Player& State::PlayerToAct()
 {
 	int playerToAct = 0;
 
-	for (int p = 0; p < players.size(); ++p)
+	for (size_t p = 0; p < players.size(); ++p)
 	{
 		if (players[p].Seat() == seatToAct)
 		{
@@ -87,16 +87,16 @@ bool State::IsFinal() const
 	bool allFolded = true;
 	bool lastBettorExists = lastBettor != NoLastBettor;
 
-	for (int p = 0; p < players.size(); ++p)
+	for (auto& player : players)
 	{
-		bool isLastBettor = lastBettorExists && players[p].Seat() == lastBettor;
+		bool isLastBettor = lastBettorExists && player.Seat() == lastBettor;
 
 		if (isLastBettor)
 		{
 			continue;
 		}
 
-		Action lastAction = players[p].LastAction();
+		Action lastAction = player.LastAction();
 		bool isLastActionPassive = lastAction == Action::Call || lastAction == Action::Check;
 		allPassiveActions = allPassiveActions && isLastActionPassive;
 		allFolded = allFolded && lastAction == Action::Fold;
@@ -106,6 +106,28 @@ bool State::IsFinal() const
 	bool isFinal = (allPassiveActions && isRiver) || allFolded;
 
 	return isFinal;
+}
+
+bool State::IsClosingAction(const Player& player) const
+{
+	bool lastBettorExists = lastBettor != NoLastBettor;
+
+	if (lastBettorExists)
+	{
+		int bestDistance = INT_MAX;
+		int seatDifference = INT_MIN;
+
+		for (size_t p = 0; p < players.size(); ++p)
+		{
+
+		}
+	}
+	else
+	{
+
+	}
+
+	return false;
 }
 
 double State::Value() const
@@ -132,17 +154,19 @@ void State::SetValue()
 
 const Player& State::NextToAct() const
 {
-	int seatDifference = 0;
+	bool lastBettorExists = lastBettor != NoLastBettor;
+
+	int seatDifference = INT_MIN;
 	int bestDifference = INT_MAX;
 	int bestIndex = -1;
 
-	for (int p = 0; p < players.size(); ++p)
+	for (size_t p = 0; p < players.size(); ++p)
 	{
 		Player player = players[p];
 
 		if (player.Seat() > seatToAct && player.LastAction() != Action::Fold)
 		{
-			seatDifference = player.Seat() - seatToAct;
+			//seatDifference = player.Seat() - seatToAct;
 			
 			if (seatDifference < bestDifference)
 			{

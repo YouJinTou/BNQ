@@ -1,11 +1,11 @@
 #include "Player.h"
 
-Player::Player(int seat, double stack) :
+Player::Player(Position seat, double stack) :
 	Player(seat, stack, false, Card::None)
 {
 }
 
-Player::Player(int seat, double stack, bool isHero, Hand hand) :
+Player::Player(Position seat, double stack, bool isHero, Hand hand) :
 	seat(seat),
 	stack(stack),
 	isHero(isHero),
@@ -13,7 +13,7 @@ Player::Player(int seat, double stack, bool isHero, Hand hand) :
 {
 }
 
-int Player::Seat() const
+Position Player::Seat() const
 {
 	return seat;
 }
@@ -41,4 +41,9 @@ void Player::SetLastAction(Action action)
 void Player::SetStack(double wager)
 {
 	stack = (stack - wager) < 0.0 ? 0.0 : stack - wager;
+}
+
+bool Player::operator<(const Player& other)
+{
+	return seat < other.seat;
 }

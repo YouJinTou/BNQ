@@ -6,6 +6,7 @@
 #include "Action.h"
 #include "Board.h"
 #include "Player.h"
+#include "Position.h"
 #include "StateType.h"
 #include "Street.h"
 
@@ -17,15 +18,15 @@ public:
 		std::vector<Player>& players,
 		Board& board,
 		double pot,
-		int seatToAct,
-		int lastBettor,
+		Position seatToAct,
+		Position lastBettor,
 		Street street,
 		double wagerToCall);
 	State(std::vector<Player>& players,
 		Board& board,
 		double pot,
-		int seatToAct,
-		int lastBettor,
+		Position seatToAct,
+		Position lastBettor,
 		Street street,
 		double wagerToCall,
 		std::shared_ptr<State> prevState);
@@ -38,18 +39,19 @@ public:
 	double WagerToCall() const;
 	bool FacingCheck() const;
 	bool IsFinal() const;
+	bool IsClosingAction(const Player& player) const;
 	double Value() const;
 public:
 	State& operator=(const State& rhs);
 protected:
-	static constexpr int NoLastBettor = -1;
+	static constexpr Position NoLastBettor = Position::None;
 protected:
 	std::shared_ptr<State> prevState;
 	std::vector<Player> players;
 	Board& board;
 	double pot;
-	int seatToAct;
-	int lastBettor;
+	Position seatToAct;
+	Position lastBettor;
 	Street street;
 	double wagerToCall;
 	double value;

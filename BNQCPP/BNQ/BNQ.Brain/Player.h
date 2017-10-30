@@ -2,6 +2,7 @@
 
 #include "Action.h"
 #include "Card.h"
+#include "Position.h"
 
 typedef unsigned long long Hand;
 
@@ -9,16 +10,18 @@ class Player
 {
 public:
 	Player() = default;
-	Player(int seat, double stack);
-	Player(int seat, double stack, bool isHero, Hand hand);
-	int Seat() const;
+	Player(Position seat, double stack);
+	Player(Position seat, double stack, bool isHero, Hand hand);
+	Position Seat() const;
 	double Stack() const;
 	bool IsHero() const;
 	Action LastAction() const;
 	void SetLastAction(Action action);
 	void SetStack(double wager);
+public:
+	bool operator<(const Player& other);
 private:
-	int seat;
+	Position seat;
 	double stack;
 	bool isHero;
 	Hand hand;
