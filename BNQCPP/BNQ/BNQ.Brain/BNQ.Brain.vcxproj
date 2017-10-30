@@ -123,6 +123,7 @@
     <ClInclude Include="OpponentState.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerStrategy.h" />
+    <ClInclude Include="FinalState.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateType.h" />
     <ClInclude Include="Street.h" />
@@ -138,6 +139,7 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="OpponentState.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="FinalState.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="VillainStrategy.cpp" />
   </ItemGroup>
