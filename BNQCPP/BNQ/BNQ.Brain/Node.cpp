@@ -1,6 +1,7 @@
+#include "HeroStrategy.h"
 #include "Node.h"
 
-int Node::TotalVisits;
+int Node::TotalVisits = 0;
 
 Node::Node(std::shared_ptr<State> state) :
 	state(state)
@@ -59,10 +60,10 @@ Node Node::Expand()
 
 		for (Action action : choiceState->Actions())
 		{
-			auto actionState = std::make_shared<ActionState>(state, action);
+			auto actionState = std::make_shared<ActionState>(state, &HeroStrategy());
 			Node child{ actionState };
 
-			children.push_back(child);
+			children.emplace_back(child);
 		}
 
 		return children[0];
@@ -102,10 +103,12 @@ State* Node::NextState() const
 
 void Node::SimulateRecursive(State& state)
 {
-	if (state.IsShowdown())
+	if (state.IsFinal())
 	{
 		value = state.Value();
 
 		return;
 	}
+
+	SimulateRecursive(*state.NextState());
 }
