@@ -2,8 +2,9 @@
 
 #include "PlayerStrategy.h"
 
-class HeroStrategy : PlayerStrategy
+class HeroStrategy : public PlayerStrategy
 {
 public:
-	Action ExecuteChoice(State& state) const;
+	Action ExecuteChoice(State& state);
+	void HeroStrategy::AdjustStack(Action action, Player& player, double pot, double wagerToCall);
 };

@@ -2,8 +2,9 @@
 
 #include "PlayerStrategy.h"
 
-class VillainStrategy : PlayerStrategy
+class VillainStrategy : public PlayerStrategy
 {
 public:
-	Action ExecuteChoice(State& state) const;
+	Action ExecuteChoice(State& state);
+	virtual void AdjustStack(Action action, Player& player, double pot, double wagerToCall) = 0;
 };
