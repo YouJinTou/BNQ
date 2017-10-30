@@ -5,7 +5,11 @@ Player::Player(int seat, int stack) :
 {
 }
 
-Player::Player(int seat, int stack, bool isHero, Card hand)
+Player::Player(int seat, int stack, bool isHero, Hand hand) :
+	seat(seat),
+	stack(stack),
+	isHero(isHero),
+	hand(hand)
 {
 }
 

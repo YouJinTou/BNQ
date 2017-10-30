@@ -1,5 +1,6 @@
 #include <vector>
 
+#include "Card.h"
 #include "MCTS.h"
 #include "Node.h"
 #include "OpponentState.h"
@@ -10,7 +11,7 @@ int main()
 {
 	std::vector<Player> players
 	{
-		Player(1, 100),
+		Player(1, 100, true, Card::c2 | Card::cJ),
 		Player(2, 100)
 	};
 	auto rootState = std::make_shared<OpponentState>(players);
