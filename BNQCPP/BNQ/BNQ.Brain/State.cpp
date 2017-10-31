@@ -65,6 +65,11 @@ double State::Pot() const
 	return pot;
 }
 
+void State::SetPot(double wager)
+{
+	pot += wager;
+}
+
 Position::Position State::SeatToAct() const
 {
 	return seatToAct;

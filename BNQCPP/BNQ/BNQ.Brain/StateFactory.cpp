@@ -1,8 +1,11 @@
 #include "Action.h"
+#include "ActionState.h"
 #include "ChanceState.h"
 #include "ChoiceState.h"
+#include "HeroStrategy.h"
 #include "StateFactory.h"
 #include "Street.h"
+#include "VillainStrategy.h"
 
 std::vector<std::shared_ptr<State> > StateFactory::CreateStates(std::shared_ptr<State> statePtr)
 {
@@ -95,7 +98,6 @@ std::shared_ptr<State> StateFactory::CreateChoiceState(std::shared_ptr<State> st
 {
 	State* state = statePtr.get();
 	std::vector<Action> actions;
-
 	auto choiceState = std::make_shared<ChoiceState>(
 		statePtr,
 		state->Players(),
@@ -142,7 +144,25 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateChanceStates(std::share
 
 std::shared_ptr<State> StateFactory::CreateBet50State(std::shared_ptr<State> statePtr)
 {
-	return std::shared_ptr<State>();
+	State* state = statePtr.get();
+	auto bet50State = std::make_shared<ActionState>(
+		statePtr,
+		&HeroStrategy(),
+		state->Players(),
+		state->GetBoard(),
+		state->Pot(),
+		state->SeatToAct(),
+		state->LastBettor(),
+		state->CurrentStreet(),
+		state->WagerToCall());
+	Player& player = bet50State->ToAct();
+	double pot = bet50State->Pot();
+	double betSize = 0.5 * pot;
+
+	player.SetStack(betSize);
+	bet50State->SetPot(betSize);
+
+	return bet50State;
 }
 
 std::shared_ptr<State> StateFactory::CreateCallState(std::shared_ptr<State> statePtr)
