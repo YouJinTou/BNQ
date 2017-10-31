@@ -126,6 +126,7 @@
     <ClInclude Include="FinalState.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="StateFactory.h" />
     <ClInclude Include="StateType.h" />
     <ClInclude Include="Street.h" />
     <ClInclude Include="VillainStrategy.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="FinalState.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateFactory.cpp" />
     <ClCompile Include="VillainStrategy.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
