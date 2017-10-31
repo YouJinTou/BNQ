@@ -1,5 +1,8 @@
+#include "ChanceState.h"
 #include "HeroStrategy.h"
 #include "Node.h"
+#include "OpponentState.h"
+#include "StateFactory.h"
 #include "VillainStrategy.h"
 
 int Node::TotalVisits = 0;
@@ -50,41 +53,19 @@ Node Node::Expand()
 		throw std::logic_error("Cannot expand an already expanded node.");
 	}
 
-	StateType stateType = state->Type();
+	auto states = StateFactory::CreateStates(state);
 
-	switch (stateType)
+	for (auto& state : states)
 	{
-	case StateType::Chance:
-
-		break;
-	case StateType::Choice:
-		break;
-	case StateType::Final:
-		break;
-	case StateType::Opponent:
-	case StateType::HeroAction:
-	{
-		ChoiceState* choiceState = (ChoiceState*)NextState();
-		auto strategy = stateType == StateType::HeroAction ? 
-			std::unique_ptr<PlayerStrategy>{ std::make_unique<HeroStrategy>() } :
-			std::unique_ptr<PlayerStrategy>{ std::make_unique<VillainStrategy>() };
-
-		for (Action action : choiceState->Actions())
-		{
-			auto actionState = std::make_shared<ActionState>(state, strategy.get());
-			Node child{ actionState };
-
-			children.emplace_back(child);
-		}
-
-		return children[0];
+		children.emplace_back(Node(state));
 	}
-	}
+
+	return children[0];
 }
 
 void Node::Simulate()
 {
-	SimulateRecursive(*CurrentState());
+	SimulateRecursive(*state.get());
 }
 
 std::vector<Node>& Node::Children()
@@ -102,14 +83,14 @@ Node& Node::operator=(const Node& rhs)
 	return *this;
 }
 
-State* Node::CurrentState() const
+StateType Node::CurrentState() const
 {
-	return dynamic_cast<State*>(state.get());
+	return state.get()->Type();
 }
 
-State* Node::NextState() const
+StateType Node::NextState() const
 {
-	return CurrentState()->NextState().get();
+	return state.get()->NextState();
 }
 
 void Node::SimulateRecursive(State& state)
@@ -121,5 +102,7 @@ void Node::SimulateRecursive(State& state)
 		return;
 	}
 
-	SimulateRecursive(*state.NextState());
+	auto nextState = StateFactory::CreateStates(this->state)[0].get();
+
+	SimulateRecursive(*nextState);
 }

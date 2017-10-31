@@ -29,8 +29,8 @@ private:
 	static constexpr double ExplorationConstant = 2.0;
 	static int TotalVisits;
 private:
-	State* CurrentState() const;
-	State* NextState() const;
+	StateType CurrentState() const;
+	StateType NextState() const;
 	void SimulateRecursive(State& state);
 private:
 	std::shared_ptr<State> state;
