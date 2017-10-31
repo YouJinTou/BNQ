@@ -35,7 +35,7 @@ void MCTS::Select()
 		return;
 	}
 
-	double currentBest = -DBL_MAX;
+	double currentBest = DBL_MIN;
 	Node bestNode;
 
 	for (const Node& child : current.Children())
