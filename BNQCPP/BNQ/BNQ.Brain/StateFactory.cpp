@@ -1,4 +1,6 @@
+#include "Action.h"
 #include "ChanceState.h"
+#include "ChoiceState.h"
 #include "StateFactory.h"
 #include "Street.h"
 
@@ -12,7 +14,7 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateStates(std::shared_ptr<
 	{
 	case Chance:
 	case Choice:
-		states.emplace_back(CreateState(nextStateType));
+		states.emplace_back(CreateState(statePtr));
 
 		break;
 	case Final:
@@ -25,7 +27,7 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateStates(std::shared_ptr<
 			return CreateChanceStates(statePtr);
 		}
 
-		states.emplace_back(CreateState(nextStateType));
+		states.emplace_back(CreateState(statePtr));
 
 		break;
 	}
@@ -38,14 +40,16 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateStates(std::shared_ptr<
 	return states;
 }
 
-std::shared_ptr<State> StateFactory::CreateState(StateType stateType)
+std::shared_ptr<State> StateFactory::CreateState(std::shared_ptr<State> statePtr)
 {
-	switch (stateType)
+	StateType nextStateType = statePtr.get()->NextState();
+
+	switch (nextStateType)
 	{
 	case Chance:
-		break;
+		throw std::logic_error("Should not be creating a chance state.");
 	case Choice:
-		break;
+		return CreateChoiceState(statePtr);
 	case Final:
 		break;
 	case HeroAction:
@@ -53,12 +57,57 @@ std::shared_ptr<State> StateFactory::CreateState(StateType stateType)
 	case Opponent:
 		break;
 	case None:
-		break;
+		throw std::logic_error("Should not be creating a no-state.");
 	default:
-		break;
+		throw std::logic_error("There should always be something to create.");
 	}
 
 	return std::shared_ptr<State>();
+}
+
+std::vector<std::shared_ptr<State>> StateFactory::CreateActionStates(std::shared_ptr<State> statePtr)
+{
+	std::vector<std::shared_ptr<State> > actionStates;
+	State* state = statePtr.get();
+	
+	if (state->FacingCheck())
+	{
+		actionStates.emplace_back(CreateBet50State(statePtr));
+		actionStates.emplace_back(CreateCheckState(statePtr));
+
+		return actionStates;
+	}
+
+	bool canRaise = state->ToAct().Stack() > state->WagerToCall();
+
+	if (canRaise)
+	{
+		actionStates.emplace_back(CreateRaise50State(statePtr));
+	}
+
+	actionStates.emplace_back(CreateCallState(statePtr));
+	actionStates.emplace_back(CreateFoldState(statePtr));
+
+	return actionStates;
+}
+
+std::shared_ptr<State> StateFactory::CreateChoiceState(std::shared_ptr<State> statePtr)
+{
+	State* state = statePtr.get();
+	std::vector<Action> actions;
+
+	auto choiceState = std::make_shared<ChoiceState>(
+		statePtr,
+		state->Players(),
+		state->GetBoard(),
+		state->Pot(),
+		state->SeatToAct(),
+		state->LastBettor(),
+		state->CurrentStreet(),
+		state->WagerToCall(),
+		actions);
+
+	return choiceState;
 }
 
 std::vector<std::shared_ptr<State> > StateFactory::CreateChanceStates(std::shared_ptr<State> statePtr)
@@ -89,4 +138,29 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateChanceStates(std::share
 	}
 
 	return chanceStates;
+}
+
+std::shared_ptr<State> StateFactory::CreateBet50State(std::shared_ptr<State> statePtr)
+{
+	return std::shared_ptr<State>();
+}
+
+std::shared_ptr<State> StateFactory::CreateCallState(std::shared_ptr<State> statePtr)
+{
+	return std::shared_ptr<State>();
+}
+
+std::shared_ptr<State> StateFactory::CreateCheckState(std::shared_ptr<State> statePtr)
+{
+	return std::shared_ptr<State>();
+}
+
+std::shared_ptr<State> StateFactory::CreateFoldState(std::shared_ptr<State> statePtr)
+{
+	return std::shared_ptr<State>();
+}
+
+std::shared_ptr<State> StateFactory::CreateRaise50State(std::shared_ptr<State> statePtr)
+{
+	return std::shared_ptr<State>();
 }
