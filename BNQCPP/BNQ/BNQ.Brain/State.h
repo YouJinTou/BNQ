@@ -35,6 +35,7 @@ public:
 public:
 	Board& GetBoard();
 	double Pot() const;
+	void SetPot(double wager);
 	Position::Position SeatToAct() const;
 	Position::Position LastBettor() const;
 	Player& ToAct();
