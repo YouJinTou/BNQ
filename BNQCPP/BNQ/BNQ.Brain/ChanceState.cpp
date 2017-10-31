@@ -4,19 +4,17 @@
 #include "OpponentState.h"
 #include "VillainStrategy.h"
 
-ChanceState::ChanceState(std::shared_ptr<State> prevState) :
+ChanceState::ChanceState(
+	std::shared_ptr<State> prevState,
+	std::vector<Player>& players,
+	Board& board,
+	double pot,
+	Position::Position seatToAct,
+	Position::Position lastBettor,
+	Street street,
+	double wagerToCall) :
 	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, prevState)
 {
-	Card nextCard = board.NextRandomCard();
-
-	if (board.Turn() == Card::None)
-	{
-		board.SetTurn(nextCard);
-	}
-	else if (board.River() == Card::None)
-	{
-		board.SetRiver(nextCard);
-	}
 }
 
 StateType ChanceState::Type() const
@@ -24,14 +22,19 @@ StateType ChanceState::Type() const
 	return StateType::Chance;
 }
 
-std::shared_ptr<State> ChanceState::NextState()
+StateType ChanceState::NextState()
 {
-	if (NextToAct().IsHero())
-	{
-		return std::make_shared<ActionState>(
-			std::make_shared<ChanceState>(*this), &HeroStrategy());
-	}
-
-	return std::make_shared<OpponentState>(
-		players, std::make_shared<ChanceState>(*this), &VillainStrategy());
+	return NextToAct().IsHero() ? StateType::HeroAction : StateType::Opponent;
 }
+
+//std::shared_ptr<State> ChanceState::NextState()
+//{
+//	if (NextToAct().IsHero())
+//	{
+//		return std::make_shared<ActionState>(
+//			std::make_shared<ChanceState>(*this), &HeroStrategy());
+//	}
+//
+//	return std::make_shared<OpponentState>(
+//		players, std::make_shared<ChanceState>(*this), &VillainStrategy());
+//}

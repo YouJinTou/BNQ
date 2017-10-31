@@ -5,9 +5,16 @@
 class FinalState : public State
 {
 public:
-	FinalState(std::vector<Player>& players);
-	FinalState(std::vector<Player>& players, std::shared_ptr<State> prevState);
-	std::shared_ptr<State> NextState();
+	FinalState(
+		std::shared_ptr<State> prevState,
+		std::vector<Player>& players,
+		Board& board,
+		double pot,
+		Position::Position seatToAct,
+		Position::Position lastBettor,
+		Street street,
+		double wagerToCall);
+	StateType NextState();
 	StateType Type() const;
 private:
 };

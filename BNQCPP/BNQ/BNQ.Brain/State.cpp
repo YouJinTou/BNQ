@@ -1,12 +1,16 @@
 #include <assert.h>
 
-#include "State.h"
-
 #include "ActionState.h"
 #include "ChanceState.h"
 #include "ChoiceState.h"
 #include "FinalState.h"
 #include "OpponentState.h"
+#include "State.h"
+
+State::State() :
+	board(Board())
+{
+}
 
 State::State(
 	std::vector<Player>& players, 
@@ -51,9 +55,24 @@ std::vector<Player>& State::Players()
 	return players;
 }
 
+Board& State::GetBoard()
+{
+	return board;
+}
+
 double State::Pot() const
 {
 	return pot;
+}
+
+Position::Position State::SeatToAct() const
+{
+	return seatToAct;
+}
+
+Position::Position State::LastBettor() const
+{
+	return lastBettor;
 }
 
 Player& State::ToAct()

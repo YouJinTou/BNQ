@@ -13,7 +13,7 @@
 class State
 {
 public:
-	State() = default;
+	State();
 	State(
 		std::vector<Player>& players,
 		Board& board,
@@ -31,10 +31,14 @@ public:
 		double wagerToCall,
 		std::shared_ptr<State> prevState);
 	virtual StateType Type() const = 0;
-	virtual std::shared_ptr<State> NextState() = 0;
+	virtual StateType NextState() = 0;
 public:
+	Board& GetBoard();
 	double Pot() const;
+	Position::Position SeatToAct() const;
+	Position::Position LastBettor() const;
 	Player& ToAct();
+	std::vector<Player>& Players();
 	Street CurrentStreet() const;
 	double WagerToCall() const;
 	bool FacingCheck() const;
@@ -56,7 +60,6 @@ protected:
 	double wagerToCall;
 	double value;
 protected:
-	std::vector<Player>& Players();
 	void SetValue();
 	const Player& NextToAct() const;
 private:
