@@ -148,7 +148,7 @@ bool State::IsClosingAction(const Player& player) const
 		{
 			bool isClosingAction = true;
 
-			for (size_t p = lastBettorIndex - 1; p >= 0; --p)
+			for (int p = lastBettorIndex - 1; p >= 0; p--)
 			{
 				if (isClosingAction && players[p].LastAction() != Action::Fold)
 				{
@@ -180,7 +180,7 @@ bool State::IsClosingAction(const Player& player) const
 
 	bool isClosingAction = true;
 
-	for (size_t p = players.size() - 1; p >= 0; --p)
+	for (int p = players.size() - 1; p >= 0; --p)
 	{
 		if (isClosingAction && players[p].LastAction() != Action::Fold)
 		{
