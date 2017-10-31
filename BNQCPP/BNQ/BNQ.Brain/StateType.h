@@ -7,4 +7,5 @@ enum StateType
 	Final,
 	HeroAction,
 	Opponent,
+	None
 };
