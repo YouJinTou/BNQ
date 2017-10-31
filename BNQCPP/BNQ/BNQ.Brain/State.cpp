@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "State.h"
 
 #include "ActionState.h"
@@ -10,8 +12,8 @@ State::State(
 	std::vector<Player>& players, 
 	Board& board,
 	double pot,
-	Position seatToAct,
-	Position lastBettor,
+	Position::Position seatToAct,
+	Position::Position lastBettor,
 	Street street,
 	double wagerToCall) :
 	players(players),
@@ -28,8 +30,8 @@ State::State(
 	std::vector<Player>& players, 
 	Board& board,
 	double pot,
-	Position seatToAct,
-	Position lastBettor,
+	Position::Position seatToAct,
+	Position::Position lastBettor,
 	Street street,
 	double wagerToCall,
 	std::shared_ptr<State> prevState) :
@@ -54,9 +56,9 @@ double State::Pot() const
 	return pot;
 }
 
-Player& State::PlayerToAct()
+Player& State::ToAct()
 {
-	int playerToAct = 0;
+	size_t playerToAct = 0;
 
 	for (size_t p = 0; p < players.size(); ++p)
 	{
@@ -111,23 +113,58 @@ bool State::IsFinal() const
 bool State::IsClosingAction(const Player& player) const
 {
 	bool lastBettorExists = lastBettor != NoLastBettor;
+	int playerIndex = IndexOf(player);
 
 	if (lastBettorExists)
 	{
-		int bestDistance = INT_MAX;
-		int seatDifference = INT_MIN;
+		int lastBettorIndex = IndexOf(lastBettor);
+		bool lastBettorInPosition = lastBettorIndex > playerIndex;
 
-		for (size_t p = 0; p < players.size(); ++p)
+		if (lastBettorInPosition)
 		{
+			bool isClosingAction = true;
 
+			for (size_t p = lastBettorIndex - 1; p >= 0; --p)
+			{
+				if (isClosingAction && players[p].LastAction() != Action::Fold)
+				{
+					isClosingAction = playerIndex == p;
+				}
+			}
+
+			return isClosingAction;
+		}
+
+		for (auto& p : players)
+		{
+			if (p.Seat() > player.Seat() && p.LastAction() != Action::Fold)
+			{
+				return false;
+			}
+		}
+
+		for (auto& p : players)
+		{
+			if (p.Seat() < lastBettor && p.LastAction() != Action::Fold)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool isClosingAction = true;
+
+	for (size_t p = players.size() - 1; p >= 0; --p)
+	{
+		if (isClosingAction && players[p].LastAction() != Action::Fold)
+		{
+			isClosingAction = playerIndex == p;
 		}
 	}
-	else
-	{
 
-	}
-
-	return false;
+	return isClosingAction;
 }
 
 double State::Value() const
@@ -156,25 +193,104 @@ const Player& State::NextToAct() const
 {
 	bool lastBettorExists = lastBettor != NoLastBettor;
 
-	int seatDifference = INT_MIN;
-	int bestDifference = INT_MAX;
-	int bestIndex = -1;
-
-	for (size_t p = 0; p < players.size(); ++p)
+	if (lastBettorExists)
 	{
-		Player player = players[p];
+		bool lastBettorInPosition = lastBettor - seatToAct > 0;
 
+		if (lastBettorInPosition)
+		{
+			for (auto& player : players)
+			{
+				if (player.Seat() > seatToAct && player.LastAction() != Action::Fold)
+				{
+					return player;
+				}
+			}
+
+			assert(0);
+		}
+		else
+		{
+			for (auto& player : players)
+			{
+				if (player.Seat() > lastBettor && player.LastAction() != Action::Fold)
+				{
+					return player;
+				}
+				
+				assert(0);
+			}
+
+			for (auto& player : players)
+			{
+				if (player.Seat() < seatToAct && player.LastAction() != Action::Fold)
+				{
+					return player;
+				}
+			}
+
+			assert(0);
+		}		
+	}
+
+	for (auto& player : players)
+	{
 		if (player.Seat() > seatToAct && player.LastAction() != Action::Fold)
 		{
-			//seatDifference = player.Seat() - seatToAct;
-			
-			if (seatDifference < bestDifference)
-			{
-				bestDifference = seatDifference;
-				bestIndex = p;
-			}
+			return player;
 		}
 	}
 
-	return players[bestIndex];
+	assert(0);
+}
+
+int State::IndexOf(Position::Position pos) const
+{
+	int index = -1;
+
+	for (int p = 0; p < players.size(); ++p)
+	{
+		if (players[p].Seat() == pos)
+		{
+			index = p;
+
+			break;
+		}
+	}
+
+	return index;
+}
+
+int State::IndexOf(const Player& player) const
+{
+	int index = -1;
+
+	for (int p = 0; p < players.size(); ++p)
+	{
+		if (players[p].Seat() == player.Seat())
+		{
+			index = p;
+
+			break;
+		}
+	}
+
+	return index;
+}
+
+const Player& State::PlayerAt(Position::Position pos) const
+{
+	const Player* p = nullptr;
+
+	for (auto& player : players)
+	{
+		if (player.Seat() == pos)
+		{
+			p = &player;
+
+			break;
+		}
+	}
+
+	return *p;
 }
