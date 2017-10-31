@@ -1,6 +1,7 @@
 #include "ActionState.h"
+#include "ChanceState.h"
 #include "OpponentState.h"
-#include "PlayerStrategy.h"
+#include "VillainStrategy.h"
 
 ActionState::ActionState(std::shared_ptr<State> prevState, PlayerStrategy* strategy) :
 	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, prevState),
@@ -10,7 +11,13 @@ ActionState::ActionState(std::shared_ptr<State> prevState, PlayerStrategy* strat
 
 std::shared_ptr<State> ActionState::NextState()
 {
-	return std::shared_ptr<OpponentState>();
+	if (IsClosingAction(ToAct()))
+	{
+		return std::make_shared<ChanceState>(std::make_shared<ActionState>(*this));
+	}
+
+	return std::make_shared<OpponentState>(
+		players, std::make_shared<ActionState>(*this), &VillainStrategy());
 }
 
 StateType ActionState::Type() const

@@ -7,6 +7,16 @@
 ChanceState::ChanceState(std::shared_ptr<State> prevState) :
 	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, prevState)
 {
+	Card nextCard = board.NextRandomCard();
+
+	if (board.Turn() == Card::None)
+	{
+		board.SetTurn(nextCard);
+	}
+	else if (board.River() == Card::None)
+	{
+		board.SetRiver(nextCard);
+	}
 }
 
 StateType ChanceState::Type() const
