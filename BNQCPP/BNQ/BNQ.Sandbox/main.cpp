@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Position.h"
 #include "State.h"
+#include "VillainStrategy.h"
 
 int main()
 {
@@ -18,10 +19,18 @@ int main()
 		Player(Position::BUT, 100),
 		Player(Position::CO, 100, true, Card::c2 | Card::cJ),
 	};
-
+	Board board = Board(Card::c2 | Card::hJ | Card::dA);
 	std::sort(players.begin(), players.end());
 
-	auto rootState = std::make_shared<OpponentState>(players);
+	auto rootState = std::make_shared<OpponentState>(
+		&VillainStrategy(),
+		players,
+		board,
+		3.0,
+		Position::Position::BB,
+		Position::Position::None,
+		Street::Flop,
+		0.0);
 	Node rootNode = Node(rootState);
 	MCTS mcts = MCTS(rootNode);
 	Action bestAction = mcts.Go();
