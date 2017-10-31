@@ -10,9 +10,9 @@ class Player
 {
 public:
 	Player() = default;
-	Player(Position seat, double stack);
-	Player(Position seat, double stack, bool isHero, Hand hand);
-	Position Seat() const;
+	Player(Position::Position seat, double stack);
+	Player(Position::Position seat, double stack, bool isHero, Hand hand);
+	Position::Position Seat() const;
 	double Stack() const;
 	bool IsHero() const;
 	Action LastAction() const;
@@ -21,7 +21,7 @@ public:
 public:
 	bool operator<(const Player& other);
 private:
-	Position seat;
+	Position::Position seat;
 	double stack;
 	bool isHero;
 	Hand hand;

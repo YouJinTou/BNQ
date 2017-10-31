@@ -3,7 +3,7 @@
 Action VillainStrategy::ExecuteChoice(State& state)
 {
 	Action action;
-	Player& player = state.PlayerToAct();
+	Player& player = state.ToAct();
 	double pot = state.Pot();
 	double wagerToCall = state.WagerToCall();
 

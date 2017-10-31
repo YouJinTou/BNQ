@@ -1,11 +1,11 @@
 #include "Player.h"
 
-Player::Player(Position seat, double stack) :
+Player::Player(Position::Position seat, double stack) :
 	Player(seat, stack, false, Card::None)
 {
 }
 
-Player::Player(Position seat, double stack, bool isHero, Hand hand) :
+Player::Player(Position::Position seat, double stack, bool isHero, Hand hand) :
 	seat(seat),
 	stack(stack),
 	isHero(isHero),
@@ -13,7 +13,7 @@ Player::Player(Position seat, double stack, bool isHero, Hand hand) :
 {
 }
 
-Position Player::Seat() const
+Position::Position Player::Seat() const
 {
 	return seat;
 }
