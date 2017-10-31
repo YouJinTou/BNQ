@@ -9,17 +9,21 @@ using BoardCards = unsigned long long;
 
 struct Board
 {
-	Board(FlopCards flop, Card turn, Card river);
+	Board();
+	Board(FlopCards flop);
+	Board(FlopCards flop, Card::Card turn);
+	Board(FlopCards flop, Card::Card turn, Card::Card river);
 	BoardCards BoardCards() const;
 	FlopCards Flop() const;
-	Card Turn() const;
-	Card River() const;
+	Card::Card Turn() const;
+	Card::Card River() const;
 	void SetFlop(FlopCards flop);
-	void SetTurn(Card turn);
-	void SetRiver(Card river);
-	Card NextRandomCard() const;
+	void SetTurn(Card::Card turn);
+	void SetRiver(Card::Card river);
+	Card::Card NextRandomCard() const;
+	bool AddNextCard(Card::Card card);
 private:
 	FlopCards flop;
-	Card turn;
-	Card river;
+	Card::Card turn;
+	Card::Card river;
 };
