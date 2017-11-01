@@ -2,10 +2,10 @@
 
 enum class Action
 {
-	None,
 	Bet50,
 	Call,
 	Check,
 	Fold,
-	Raise50
+	Raise50,
+	Waiting
 };
