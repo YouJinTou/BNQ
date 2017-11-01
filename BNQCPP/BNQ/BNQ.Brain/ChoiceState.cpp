@@ -23,24 +23,17 @@ std::vector<Action>& ChoiceState::Actions()
 	return actions;
 }
 
-StateType ChoiceState::NextState()
+StateType::StateType ChoiceState::NextState()
 {
 	return NextToAct().IsHero() ? StateType::PlayerAction : StateType::PlayerAction;
 }
 
-//std::shared_ptr<State> ChoiceState::NextState()
-//{
-//	if (NextToAct().IsHero())
-//	{
-//		return std::make_shared<PlayerState>(
-//			std::make_shared<ChoiceState>(*this), &HeroStrategy());
-//	}
-//
-//	return std::make_shared<PlayerState>(
-//		players, std::make_shared<ChoiceState>(*this), &VillainStrategy());
-//}
+void ChoiceState::SetValue()
+{
+	this->value = 0.0;
+}
 
-StateType ChoiceState::Type() const
+StateType::StateType ChoiceState::Type() const
 {
 	return StateType::Choice;
 }

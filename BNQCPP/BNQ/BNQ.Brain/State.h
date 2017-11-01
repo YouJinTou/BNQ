@@ -30,9 +30,11 @@ public:
 		Street street,
 		double wagerToCall,
 		std::shared_ptr<State> prevState);
-	virtual StateType Type() const = 0;
-	virtual StateType NextState() = 0;
+	virtual StateType::StateType Type() const = 0;
+	virtual StateType::StateType NextState() = 0;
+	virtual void SetValue() = 0;
 public:
+	std::shared_ptr<State> PrevState();
 	Board& GetBoard();
 	double Pot() const;
 	void SetPot(double wager);
@@ -52,7 +54,7 @@ public:
 public:
 	State& operator=(const State& rhs);
 protected:
-	static constexpr Position::Position NoLastBettor = Position::None;
+	static constexpr Position::Position NoLastBettor = Position::Position::None;
 protected:
 	std::shared_ptr<State> prevState;
 	std::vector<Player> players;
@@ -64,7 +66,6 @@ protected:
 	double wagerToCall;
 	double value;
 protected:
-	void SetValue();
 	const Player& NextToAct() const;
 private:
 	int IndexOf(Position::Position pos) const;

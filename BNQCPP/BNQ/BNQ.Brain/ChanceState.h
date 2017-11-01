@@ -15,7 +15,8 @@ public:
 		Position::Position lastBettor,
 		Street street,
 		double wagerToCall);
-	StateType Type() const;
-	StateType NextState();
+	StateType::StateType Type() const;
+	StateType::StateType NextState();
+	void SetValue();
 private:
 };

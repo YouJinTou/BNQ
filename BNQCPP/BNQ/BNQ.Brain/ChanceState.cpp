@@ -17,24 +17,17 @@ ChanceState::ChanceState(
 {
 }
 
-StateType ChanceState::Type() const
+StateType::StateType ChanceState::Type() const
 {
 	return StateType::Chance;
 }
 
-StateType ChanceState::NextState()
+StateType::StateType ChanceState::NextState()
 {
 	return NextToAct().IsHero() ? StateType::PlayerAction : StateType::PlayerAction;
 }
 
-//std::shared_ptr<State> ChanceState::NextState()
-//{
-//	if (NextToAct().IsHero())
-//	{
-//		return std::make_shared<PlayerState>(
-//			std::make_shared<ChanceState>(*this), &HeroStrategy());
-//	}
-//
-//	return std::make_shared<PlayerState>(
-//		players, std::make_shared<ChanceState>(*this), &VillainStrategy());
-//}
+void ChanceState::SetValue()
+{
+	this->value = 0.0;
+}

@@ -25,9 +25,13 @@ public:
 		Position::Position lastBettor,
 		Street street,
 		double wagerToCall);
-	StateType NextState();
-	StateType Type() const;
+	StateType::StateType NextState();
+	StateType::StateType Type() const;
+	void SetValue();
 	Action GetAction();
 private:
 	PlayerStrategy* strategy;
+private:
+	double ShowdownValue() const;
+	bool HeroRemains() const;
 };

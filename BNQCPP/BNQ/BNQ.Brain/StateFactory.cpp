@@ -12,18 +12,16 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateStates(std::shared_ptr<
 {
 	std::vector<std::shared_ptr<State> > states;
 	State* state = statePtr.get();
-	StateType nextStateType = state->NextState();
+	StateType::StateType nextStateType = state->NextState();
 
 	switch (state->Type())
 	{
-	case Chance:
-	case Choice:
-		states.emplace_back(CreateState(statePtr));
-
+	case StateType::Chance:
+	case StateType::Choice:
+		return CreatePlayerStates(statePtr);
+	case StateType::Final:
 		break;
-	case Final:
-		break;
-	case PlayerAction:
+	case StateType::PlayerAction:
 	{
 		if (nextStateType == StateType::Chance)
 		{
@@ -32,7 +30,7 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateStates(std::shared_ptr<
 
 		return CreatePlayerStates(statePtr);
 	}
-	case None:
+	case StateType::None:
 		break;
 	default:
 		break;
@@ -43,19 +41,19 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateStates(std::shared_ptr<
 
 std::shared_ptr<State> StateFactory::CreateState(std::shared_ptr<State> statePtr)
 {
-	StateType nextStateType = statePtr.get()->NextState();
+	StateType::StateType nextStateType = statePtr.get()->NextState();
 
 	switch (nextStateType)
 	{
-	case Chance:
+	case StateType::Chance:
 		throw std::logic_error("Should not be creating a chance state.");
-	case Choice:
+	case StateType::Choice:
 		return CreateChoiceState(statePtr);
-	case Final:
+	case StateType::Final:
 		break;
-	case PlayerAction:
+	case StateType::PlayerAction:
 		break;
-	case None:
+	case StateType::None:
 		throw std::logic_error("Should not be creating a non-state.");
 	default:
 		throw std::logic_error("There should always be something to create.");
@@ -68,7 +66,7 @@ std::vector<std::shared_ptr<State>> StateFactory::CreatePlayerStates(std::shared
 {
 	std::vector<std::shared_ptr<State> > playerStates;
 	State* state = statePtr.get();
-	
+
 	if (state->FacingCheck())
 	{
 		playerStates.emplace_back(CreateBet50State(statePtr));
@@ -124,12 +122,19 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateChanceStates(std::share
 			auto chanceState = std::make_shared<ChanceState>(
 				statePtr,
 				state->Players(),
-				state->GetBoard(),
+				board,
 				state->Pot(),
 				state->SeatToAct(),
 				state->LastBettor(),
 				street,
 				state->WagerToCall());
+			Player& player = chanceState->ToAct();
+
+			player.SetLastAction(Action::None);
+			chanceState->SetSeatToAct();
+			chanceState->SetLastBettor(Position::Position::None);
+			chanceState->SetWagerToCall(0.0);
+			chanceState->SetValue();
 
 			chanceStates.emplace_back(chanceState);
 		}
@@ -156,11 +161,13 @@ std::shared_ptr<State> StateFactory::CreateBet50State(std::shared_ptr<State> sta
 	double pot = bet50State->Pot();
 	double betSize = 0.5 * pot;
 
+	player.SetLastAction(Action::Bet50);
 	player.SetStack(betSize);
 	bet50State->SetPot(betSize);
 	bet50State->SetWagerToCall(betSize);
 	bet50State->SetSeatToAct();
 	bet50State->SetLastBettor(player.Seat());
+	bet50State->SetValue();
 
 	return bet50State;
 }
@@ -184,10 +191,12 @@ std::shared_ptr<State> StateFactory::CreateCallState(std::shared_ptr<State> stat
 	bool isClosingAction = callState->IsClosingAction(player);
 
 	player.SetStack(callSize);
+	player.SetLastAction(Action::Call);
 	callState->SetPot(callSize);
 	callState->SetSeatToAct();
 	callState->SetLastBettor(isClosingAction ? Position::Position::None : state->LastBettor());
 	callState->SetWagerToCall(isClosingAction ? 0.0 : callSize);
+	callState->SetValue();
 
 	return callState;
 }
@@ -209,8 +218,10 @@ std::shared_ptr<State> StateFactory::CreateCheckState(std::shared_ptr<State> sta
 	Player& player = checkState->ToAct();
 	bool isClosingAction = checkState->IsClosingAction(player);
 
+	player.SetLastAction(Action::Check);
 	checkState->SetSeatToAct();
 	checkState->SetLastBettor(isClosingAction ? Position::Position::None : state->LastBettor());
+	checkState->SetValue();
 
 	return checkState;
 }
@@ -236,6 +247,7 @@ std::shared_ptr<State> StateFactory::CreateFoldState(std::shared_ptr<State> stat
 	foldState->SetSeatToAct();
 	foldState->SetLastBettor(isClosingAction ? Position::Position::None : state->LastBettor());
 	foldState->SetWagerToCall(isClosingAction ? 0.0 : state->WagerToCall());
+	foldState->SetValue();
 
 	return foldState;
 }
@@ -260,11 +272,12 @@ std::shared_ptr<State> StateFactory::CreateRaise50State(std::shared_ptr<State> s
 	double raiseSize = 0.5 * (2 * wagerToCall + pot);
 	bool isClosingAction = raise50State->IsClosingAction(player);
 
-	player.SetLastAction(Action::Fold);
+	player.SetLastAction(Action::Raise50);
 	raise50State->SetPot(raiseSize);
 	raise50State->SetSeatToAct();
 	raise50State->SetLastBettor(player.Seat());
 	raise50State->SetWagerToCall(raiseSize);
+	raise50State->SetValue();
 
 	return raise50State;
 }

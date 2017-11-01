@@ -54,6 +54,11 @@ std::vector<Player>& State::Players()
 	return players;
 }
 
+std::shared_ptr<State> State::PrevState()
+{
+	return prevState;
+}
+
 Board& State::GetBoard()
 {
 	return board;
@@ -220,11 +225,6 @@ State& State::operator=(const State& rhs)
 bool State::FacingCheck() const
 {
 	return wagerToCall == 0.0;
-}
-
-void State::SetValue()
-{
-	value = 0.0;
 }
 
 const Player& State::NextToAct() const

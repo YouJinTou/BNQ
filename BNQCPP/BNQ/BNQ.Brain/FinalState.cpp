@@ -12,17 +12,12 @@ FinalState::FinalState(std::shared_ptr<State> prevState,
 {
 }
 
-StateType FinalState::NextState()
+StateType::StateType FinalState::NextState()
 {
 	return StateType::None;
 }
 
-//std::shared_ptr<State> FinalState::NextState()
-//{
-//	throw std::logic_error("The shodown state cannot have a next state.");
-//}
-
-StateType FinalState::Type() const
+StateType::StateType FinalState::Type() const
 {
 	return StateType::Final;
 }

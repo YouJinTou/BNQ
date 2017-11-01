@@ -15,8 +15,9 @@ public:
 		double wagerToCall, 
 		const std::vector<Action>& actions);
 	std::vector<Action>& Actions();
-	StateType Type() const;
-	StateType NextState();
+	StateType::StateType Type() const;
+	StateType::StateType NextState();
+	void SetValue();
 private:
 	std::vector<Action> actions;
 };
