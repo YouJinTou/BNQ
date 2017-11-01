@@ -9,7 +9,7 @@ int Node::TotalVisits = 0;
 
 Node::Node(std::shared_ptr<Node> prev, std::shared_ptr<State> state) :
 	prev(prev),
-	state(state)
+	statePtr(state)
 {
 }
 
@@ -54,7 +54,7 @@ Node Node::Expand()
 		throw std::logic_error("Cannot expand an already expanded node.");
 	}
 
-	auto states = StateFactory::CreateStates(state);
+	auto states = StateFactory::CreateStates(statePtr);
 
 	for (auto& state : states)
 	{
@@ -66,7 +66,7 @@ Node Node::Expand()
 
 void Node::Simulate()
 {
-	SimulateRecursive(*state.get());
+	SimulateRecursive(statePtr);
 }
 
 void Node::Backpropagate()
@@ -76,7 +76,7 @@ void Node::Backpropagate()
 	while (current != nullptr)
 	{
 		current->UpdateVisits();
-		current->UpdateValue(current->state->Value());
+		current->UpdateValue(current->statePtr->Value());
 
 		current = current->prev.get();
 	}
@@ -89,7 +89,7 @@ std::vector<Node>& Node::Children()
 
 Node& Node::operator=(const Node& rhs)
 {
-	state = rhs.state;
+	statePtr = rhs.statePtr;
 	visits = rhs.visits;
 	value = rhs.value;
 	children = rhs.children;
@@ -99,27 +99,29 @@ Node& Node::operator=(const Node& rhs)
 
 StateType::StateType Node::CurrentState() const
 {
-	return state.get()->Type();
+	return statePtr.get()->Type();
 }
 
 StateType::StateType Node::NextState() const
 {
-	return state.get()->NextState();
+	return statePtr.get()->NextState();
 }
 
-void Node::SimulateRecursive(State& state)
+void Node::SimulateRecursive(std::shared_ptr<State> statePtr)
 {
-	if (state.IsFinal())
-	{
-		state.SetValue();
+	State* state = statePtr.get();
 
-		this->value = state.Value();
+	if (state->IsFinal())
+	{
+		state->SetValue();
+
+		this->value = state->Value();
 
 		return;
 	}
 
-	auto states = StateFactory::CreateStates(this->state);
-	auto nextState = states[std::rand() % states.size()].get();
+	auto nextStates = StateFactory::CreateStates(statePtr);
+	auto nextState = nextStates[std::rand() % nextStates.size()];
 
-	SimulateRecursive(*nextState);
+	SimulateRecursive(nextState);
 }
