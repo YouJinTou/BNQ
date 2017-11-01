@@ -1,7 +1,8 @@
 #pragma once
 
-enum Street
+enum class Street
 {
+	Preflop,
 	Flop,
 	Turn,
 	River
