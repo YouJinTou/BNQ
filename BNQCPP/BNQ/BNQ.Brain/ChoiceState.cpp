@@ -12,8 +12,9 @@ ChoiceState::ChoiceState(std::shared_ptr<State> prevState,
 	Position::Position lastBettor,
 	Street street,
 	double wagerToCall,
+	double playerWager,
 	const std::vector<Action>& actions) :
-	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, prevState),
+	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState),
 	actions(actions)
 {
 }

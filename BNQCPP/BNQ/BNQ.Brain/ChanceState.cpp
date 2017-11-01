@@ -12,8 +12,9 @@ ChanceState::ChanceState(
 	Position::Position seatToAct,
 	Position::Position lastBettor,
 	Street street,
-	double wagerToCall) :
-	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, prevState)
+	double wagerToCall,
+	double playerWager) :
+	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState)
 {
 }
 

@@ -30,6 +30,7 @@ int main()
 		Position::Position::BB,
 		Position::Position::None,
 		Street::Flop,
+		0.0,
 		0.0);
 	Node rootNode = Node(nullptr, rootState);
 	MCTS mcts = MCTS(rootNode);

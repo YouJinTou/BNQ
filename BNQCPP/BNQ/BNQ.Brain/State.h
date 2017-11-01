@@ -21,7 +21,8 @@ public:
 		Position::Position seatToAct,
 		Position::Position lastBettor,
 		Street street,
-		double wagerToCall);
+		double wagerToCall,
+		double playerWager);
 	State(std::vector<Player>& players,
 		Board& board,
 		double pot,
@@ -29,6 +30,7 @@ public:
 		Position::Position lastBettor,
 		Street street,
 		double wagerToCall,
+		double playerWager,
 		std::shared_ptr<State> prevState);
 	virtual StateType::StateType Type() const = 0;
 	virtual StateType::StateType NextState() = 0;
@@ -47,6 +49,8 @@ public:
 	Street CurrentStreet() const;
 	double WagerToCall() const;
 	void SetWagerToCall(double wager);
+	double PlayerWager() const;
+	void SetPlayerWager(double wager);
 	bool FacingCheck() const;
 	bool IsFinal() const;
 	bool IsClosingAction(const Player& player) const;
@@ -64,6 +68,7 @@ protected:
 	Position::Position lastBettor;
 	Street street;
 	double wagerToCall;
+	double playerWager;
 	double value;
 protected:
 	const Player& NextToAct() const;

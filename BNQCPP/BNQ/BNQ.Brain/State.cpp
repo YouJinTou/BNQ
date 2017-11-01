@@ -18,14 +18,16 @@ State::State(
 	Position::Position seatToAct,
 	Position::Position lastBettor,
 	Street street,
-	double wagerToCall) :
+	double wagerToCall,
+	double playerWager) :
 	players(players),
 	board(board),
 	pot(pot),
 	seatToAct(seatToAct),
 	lastBettor(lastBettor),
 	street(street),
-	wagerToCall(wagerToCall)
+	wagerToCall(wagerToCall),
+	playerWager(playerWager)
 {
 }
 
@@ -37,6 +39,7 @@ State::State(
 	Position::Position lastBettor,
 	Street street,
 	double wagerToCall,
+	double playerWager,
 	std::shared_ptr<State> prevState) :
 	players(players),
 	board(board),
@@ -45,6 +48,7 @@ State::State(
 	lastBettor(lastBettor),
 	street(street),
 	wagerToCall(wagerToCall),
+	playerWager(playerWager),
 	prevState(prevState)
 {
 }
@@ -124,6 +128,16 @@ double State::WagerToCall() const
 void State::SetWagerToCall(double wager)
 {
 	wagerToCall = wager;
+}
+
+double State::PlayerWager() const
+{
+	return playerWager;
+}
+
+void State::SetPlayerWager(double wager)
+{
+	playerWager = wager;
 }
 
 bool State::IsFinal() const
@@ -251,12 +265,10 @@ const Player& State::NextToAct() const
 		{
 			for (auto& player : players)
 			{
-				if (player.Seat() > lastBettor && player.LastAction() != Action::Fold)
+				if (player.Seat() > seatToAct && player.LastAction() != Action::Fold)
 				{
 					return player;
-				}
-				
-				assert(0);
+				}				
 			}
 
 			for (auto& player : players)

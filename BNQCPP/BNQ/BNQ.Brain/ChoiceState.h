@@ -13,6 +13,7 @@ public:
 		Position::Position lastBettor,
 		Street street,
 		double wagerToCall, 
+		double playerWager,
 		const std::vector<Action>& actions);
 	std::vector<Action>& Actions();
 	StateType::StateType Type() const;

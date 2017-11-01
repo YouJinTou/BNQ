@@ -14,7 +14,8 @@ public:
 		Position::Position seatToAct,
 		Position::Position lastBettor,
 		Street street,
-		double wagerToCall);
+		double wagerToCall,
+		double playerWager);
 	PlayerState(
 		std::shared_ptr<State> prevState,
 		PlayerStrategy* strategy,
@@ -24,7 +25,8 @@ public:
 		Position::Position seatToAct,
 		Position::Position lastBettor,
 		Street street,
-		double wagerToCall);
+		double wagerToCall,
+		double playerWager);
 	StateType::StateType NextState();
 	StateType::StateType Type() const;
 	void SetValue();

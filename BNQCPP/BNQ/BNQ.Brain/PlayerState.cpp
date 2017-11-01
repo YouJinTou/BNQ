@@ -9,8 +9,9 @@ PlayerState::PlayerState(
 	Position::Position seatToAct,
 	Position::Position lastBettor,
 	Street street,
-	double wagerToCall) :
-	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall),
+	double wagerToCall,
+	double playerWager) :
+	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager),
 	strategy(strategy)
 {
 }
@@ -24,8 +25,9 @@ PlayerState::PlayerState(
 	Position::Position seatToAct,
 	Position::Position lastBettor,
 	Street street,
-	double wagerToCall) :
-	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, prevState),
+	double wagerToCall,
+	double playerWager) :
+	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState),
 	strategy(strategy)
 {
 }
@@ -49,12 +51,12 @@ void PlayerState::SetValue()
 
 	switch (action)
 	{
-	case Action::None:
+	case Action::Waiting:
 		this->value = 0.0;
 		break;
 	case Action::Bet50:
 		this->value = isFinal && isHero ? pot :
-			isHero ? -wagerToCall : 0.0;
+			isHero ? -playerWager : 0.0;
 
 		break;
 	case Action::Call:
@@ -63,7 +65,7 @@ void PlayerState::SetValue()
 
 		break;
 	case Action::Check:
-		value = isFinal ? ShowdownValue() : 0.0;
+		this->value = isFinal ? ShowdownValue() : 0.0;
 
 		break;
 	case Action::Fold:
@@ -71,7 +73,7 @@ void PlayerState::SetValue()
 
 		break;
 	case Action::Raise50:
-		this->value = isHero ? -wagerToCall : 0.0;
+		this->value = isHero ? -playerWager : 0.0;
 
 		break;
 	default:

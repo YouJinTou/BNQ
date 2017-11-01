@@ -8,7 +8,7 @@ FinalState::FinalState(std::shared_ptr<State> prevState,
 	Position::Position lastBettor,
 	Street street,
 	double wagerToCall) :
-	State(players, board, pot, NoLastBettor, NoLastBettor, Street::River, 0.0, prevState)
+	State(players, board, pot, NoLastBettor, NoLastBettor, Street::River, 0.0, 0.0, prevState)
 {
 }
 
