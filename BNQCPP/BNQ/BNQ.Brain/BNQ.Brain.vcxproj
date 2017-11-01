@@ -122,6 +122,7 @@
     <ClInclude Include="Node.h" />
     <ClInclude Include="OpponentState.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerState.h" />
     <ClInclude Include="PlayerStrategy.h" />
     <ClInclude Include="FinalState.h" />
     <ClInclude Include="Position.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="OpponentState.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="FinalState.cpp" />
+    <ClCompile Include="PlayerState.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateFactory.cpp" />
     <ClCompile Include="VillainStrategy.cpp" />

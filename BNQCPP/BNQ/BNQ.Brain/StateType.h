@@ -5,7 +5,6 @@ enum StateType
 	Chance,
 	Choice,
 	Final,
-	HeroAction,
-	Opponent,
+	PlayerAction,
 	None
 };

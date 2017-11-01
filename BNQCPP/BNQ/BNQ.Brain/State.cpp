@@ -1,10 +1,9 @@
 #include <assert.h>
 
-#include "ActionState.h"
 #include "ChanceState.h"
 #include "ChoiceState.h"
 #include "FinalState.h"
-#include "OpponentState.h"
+#include "PlayerState.h"
 #include "State.h"
 
 State::State() :
@@ -75,9 +74,19 @@ Position::Position State::SeatToAct() const
 	return seatToAct;
 }
 
+void State::SetSeatToAct()
+{
+	seatToAct = NextToAct().Seat();
+}
+
 Position::Position State::LastBettor() const
 {
 	return lastBettor;
+}
+
+void State::SetLastBettor(Position::Position position)
+{
+	lastBettor = position;
 }
 
 Player& State::ToAct()
@@ -105,6 +114,11 @@ Street State::CurrentStreet() const
 double State::WagerToCall() const
 {
 	return wagerToCall;
+}
+
+void State::SetWagerToCall(double wager)
+{
+	wagerToCall = wager;
 }
 
 bool State::IsFinal() const

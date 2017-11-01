@@ -4,7 +4,7 @@
 #include "Card.h"
 #include "MCTS.h"
 #include "Node.h"
-#include "OpponentState.h"
+#include "PlayerState.h"
 #include "Player.h"
 #include "Position.h"
 #include "State.h"
@@ -22,7 +22,7 @@ int main()
 	Board board = Board(Card::c2 | Card::hJ | Card::dA);
 	std::sort(players.begin(), players.end());
 
-	auto rootState = std::make_shared<OpponentState>(
+	auto rootState = std::make_shared<PlayerState>(
 		&VillainStrategy(),
 		players,
 		board,

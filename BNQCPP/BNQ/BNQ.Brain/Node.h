@@ -4,9 +4,9 @@
 #include <memory>
 #include <vector>
 
-#include "ActionState.h"
+#include "PlayerState.h"
 #include "ChoiceState.h"
-#include "OpponentState.h"
+#include "PlayerState.h"
 #include "State.h"
 
 class Node

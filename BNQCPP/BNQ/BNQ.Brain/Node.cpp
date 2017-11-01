@@ -1,7 +1,7 @@
 #include "ChanceState.h"
 #include "HeroStrategy.h"
 #include "Node.h"
-#include "OpponentState.h"
+#include "PlayerState.h"
 #include "StateFactory.h"
 #include "VillainStrategy.h"
 

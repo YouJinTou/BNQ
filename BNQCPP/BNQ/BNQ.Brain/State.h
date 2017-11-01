@@ -37,11 +37,14 @@ public:
 	double Pot() const;
 	void SetPot(double wager);
 	Position::Position SeatToAct() const;
+	void SetSeatToAct();
 	Position::Position LastBettor() const;
+	void SetLastBettor(Position::Position position);
 	Player& ToAct();
 	std::vector<Player>& Players();
 	Street CurrentStreet() const;
 	double WagerToCall() const;
+	void SetWagerToCall(double wager);
 	bool FacingCheck() const;
 	bool IsFinal() const;
 	bool IsClosingAction(const Player& player) const;

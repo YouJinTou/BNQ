@@ -1,13 +1,12 @@
 #pragma once
 
 #include "State.h"
+#include "PlayerStrategy.h"
 
-class State;
-
-class OpponentState : public State
+class PlayerState : public State
 {
 public:
-	OpponentState(
+	PlayerState(
 		PlayerStrategy* strategy,
 		std::vector<Player>& players,
 		Board& board,
@@ -16,7 +15,7 @@ public:
 		Position::Position lastBettor,
 		Street street,
 		double wagerToCall);
-	OpponentState(
+	PlayerState(
 		std::shared_ptr<State> prevState,
 		PlayerStrategy* strategy,
 		std::vector<Player>& players,
@@ -28,6 +27,7 @@ public:
 		double wagerToCall);
 	StateType NextState();
 	StateType Type() const;
+	Action GetAction();
 private:
 	PlayerStrategy* strategy;
 };

@@ -1,7 +1,7 @@
-#include "ActionState.h"
+#include "PlayerState.h"
 #include "ChanceState.h"
 #include "HeroStrategy.h"
-#include "OpponentState.h"
+#include "PlayerState.h"
 #include "VillainStrategy.h"
 
 ChanceState::ChanceState(
@@ -24,17 +24,17 @@ StateType ChanceState::Type() const
 
 StateType ChanceState::NextState()
 {
-	return NextToAct().IsHero() ? StateType::HeroAction : StateType::Opponent;
+	return NextToAct().IsHero() ? StateType::PlayerAction : StateType::PlayerAction;
 }
 
 //std::shared_ptr<State> ChanceState::NextState()
 //{
 //	if (NextToAct().IsHero())
 //	{
-//		return std::make_shared<ActionState>(
+//		return std::make_shared<PlayerState>(
 //			std::make_shared<ChanceState>(*this), &HeroStrategy());
 //	}
 //
-//	return std::make_shared<OpponentState>(
+//	return std::make_shared<PlayerState>(
 //		players, std::make_shared<ChanceState>(*this), &VillainStrategy());
 //}
