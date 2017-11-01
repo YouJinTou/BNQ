@@ -24,9 +24,6 @@
     <ClInclude Include="Action.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ActionState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ChoiceState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -34,9 +31,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StateType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpponentState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
@@ -87,12 +81,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ChoiceState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ActionState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OpponentState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
