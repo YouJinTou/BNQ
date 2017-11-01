@@ -7,7 +7,8 @@
 
 int Node::TotalVisits = 0;
 
-Node::Node(std::shared_ptr<State> state) :
+Node::Node(std::shared_ptr<Node> prev, std::shared_ptr<State> state) :
+	prev(prev),
 	state(state)
 {
 }
@@ -57,7 +58,7 @@ Node Node::Expand()
 
 	for (auto& state : states)
 	{
-		children.emplace_back(Node(state));
+		children.emplace_back(Node(std::make_shared<Node>(*this), state));
 	}
 
 	return children[0];
@@ -66,6 +67,19 @@ Node Node::Expand()
 void Node::Simulate()
 {
 	SimulateRecursive(*state.get());
+}
+
+void Node::Backpropagate()
+{
+	Node* current = this;
+
+	while (current != nullptr)
+	{
+		current->UpdateVisits();
+		current->UpdateValue(current->state->Value());
+
+		current = current->prev.get();
+	}
 }
 
 std::vector<Node>& Node::Children()
@@ -83,12 +97,12 @@ Node& Node::operator=(const Node& rhs)
 	return *this;
 }
 
-StateType Node::CurrentState() const
+StateType::StateType Node::CurrentState() const
 {
 	return state.get()->Type();
 }
 
-StateType Node::NextState() const
+StateType::StateType Node::NextState() const
 {
 	return state.get()->NextState();
 }
@@ -97,12 +111,15 @@ void Node::SimulateRecursive(State& state)
 {
 	if (state.IsFinal())
 	{
-		value = state.Value();
+		state.SetValue();
+
+		this->value = state.Value();
 
 		return;
 	}
 
-	auto nextState = StateFactory::CreateStates(this->state)[0].get();
+	auto states = StateFactory::CreateStates(this->state);
+	auto nextState = states[std::rand() % states.size()].get();
 
 	SimulateRecursive(*nextState);
 }

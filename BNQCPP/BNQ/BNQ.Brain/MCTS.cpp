@@ -1,3 +1,4 @@
+#include <ctime>
 #include <float.h>
 
 #include "MCTS.h"
@@ -6,6 +7,7 @@ MCTS::MCTS(const Node& root) :
 	root(root),
 	current(root)
 {
+	std::srand(std::time(NULL));
 }
 
 Action MCTS::Go()
@@ -62,4 +64,5 @@ void MCTS::Simulate()
 
 void MCTS::Backpropagate()
 {
+	current.Backpropagate();
 }

@@ -31,7 +31,7 @@ int main()
 		Position::Position::None,
 		Street::Flop,
 		0.0);
-	Node rootNode = Node(rootState);
+	Node rootNode = Node(nullptr, rootState);
 	MCTS mcts = MCTS(rootNode);
 	Action bestAction = mcts.Go();
 

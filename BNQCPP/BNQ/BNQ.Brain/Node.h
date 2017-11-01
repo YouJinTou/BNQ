@@ -13,7 +13,7 @@ class Node
 {
 public:
 	Node() = default;
-	Node(std::shared_ptr<State> state);
+	Node(std::shared_ptr<Node> prev, std::shared_ptr<State> state);
 	bool IsLeaf() const;
 	bool Visited() const;
 	double UCB() const;
@@ -23,16 +23,18 @@ public:
 	void UpdateValue(double value);
 	Node Expand();
 	void Simulate();
+	void Backpropagate();
 public:
 	Node& operator=(const Node& rhs);
 private:
 	static constexpr double ExplorationConstant = 2.0;
 	static int TotalVisits;
 private:
-	StateType CurrentState() const;
-	StateType NextState() const;
+	StateType::StateType CurrentState() const;
+	StateType::StateType NextState() const;
 	void SimulateRecursive(State& state);
 private:
+	std::shared_ptr<Node> prev;
 	std::shared_ptr<State> state;
 	int visits = 0;
 	double value = 0.0;
