@@ -39,7 +39,7 @@ void VillainStrategy::AdjustStack(Action action, Player& player, double pot, dou
 {
 	switch (action)
 	{
-	case Bet50:
+	case Action::Bet50:
 	{
 		double betSize = 0.5 * pot;
 
@@ -47,15 +47,15 @@ void VillainStrategy::AdjustStack(Action action, Player& player, double pot, dou
 
 		break;
 	}
-	case Call:
+	case Action::Call:
 		player.SetStack(wagerToCall);
 
 		break;
-	case Check:
+	case Action::Check:
 		break;
-	case Fold:
+	case Action::Fold:
 		break;
-	case Raise50:
+	case Action::Raise50:
 	{
 		double raiseSize = 0.5 * (2 * wagerToCall + pot);
 

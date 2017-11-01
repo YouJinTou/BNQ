@@ -1,6 +1,6 @@
 #pragma once
 
-enum Action
+enum class Action
 {
 	None,
 	Bet50,
