@@ -1,10 +1,13 @@
 #pragma once
 
-enum StateType
+namespace StateType
 {
-	Chance,
-	Choice,
-	Final,
-	PlayerAction,
-	None
-};
+	enum StateType
+	{
+		Chance,
+		Choice,
+		Final,
+		PlayerAction,
+		None
+	};
+}
