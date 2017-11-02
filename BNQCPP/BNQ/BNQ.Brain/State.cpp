@@ -20,7 +20,8 @@ State::State(
 	Street street,
 	double wagerToCall,
 	double playerWager,
-	std::shared_ptr<State> prevState) :
+	std::shared_ptr<State> prevState,
+	StateType::StateType nextStateType) :
 	players(players),
 	board(board),
 	pot(pot),
@@ -29,7 +30,8 @@ State::State(
 	street(street),
 	wagerToCall(wagerToCall),
 	playerWager(playerWager),
-	prevState(prevState)
+	prevState(prevState),
+	nextStateType(nextStateType)
 {
 }
 
@@ -41,6 +43,16 @@ std::vector<Player>& State::Players()
 std::shared_ptr<State> State::PrevState()
 {
 	return prevState;
+}
+
+StateType::StateType State::NextStateType() const
+{
+	return nextStateType;
+}
+
+void State::SetNextStateType(StateType::StateType nextStateType)
+{
+	this->nextStateType = nextStateType;
 }
 
 Board& State::GetBoard()
@@ -98,6 +110,11 @@ Player& State::ToAct()
 Street State::CurrentStreet() const
 {
 	return street;
+}
+
+void State::SetStreet(Street street)
+{
+	this->street = street;
 }
 
 double State::WagerToCall() const

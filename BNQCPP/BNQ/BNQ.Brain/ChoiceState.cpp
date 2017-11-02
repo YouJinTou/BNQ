@@ -5,6 +5,7 @@
 #include "VillainStrategy.h"
 
 ChoiceState::ChoiceState(std::shared_ptr<State> prevState,
+	StateType::StateType nextStateType,
 	std::vector<Player>& players,
 	Board& board,
 	double pot,
@@ -14,7 +15,7 @@ ChoiceState::ChoiceState(std::shared_ptr<State> prevState,
 	double wagerToCall,
 	double playerWager,
 	const std::vector<Action>& actions) :
-	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState),
+	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState, nextStateType),
 	actions(actions)
 {
 }

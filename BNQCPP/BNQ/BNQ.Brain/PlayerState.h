@@ -8,6 +8,7 @@ class PlayerState : public State
 public:
 	PlayerState(
 		std::shared_ptr<State> prevState,
+		StateType::StateType nextStateType,
 		PlayerStrategy* strategy,
 		std::vector<Player>& players,
 		Board& board,
@@ -17,7 +18,6 @@ public:
 		Street street,
 		double wagerToCall,
 		double playerWager);
-	StateType::StateType NextState();
 	StateType::StateType Type() const;
 	void SetValue();
 	Action GetAction();

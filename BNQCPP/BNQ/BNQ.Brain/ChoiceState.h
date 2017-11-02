@@ -5,7 +5,9 @@
 class ChoiceState : public State
 {
 public:
-	ChoiceState(std::shared_ptr<State> prevState,
+	ChoiceState(
+		std::shared_ptr<State> prevState,
+		StateType::StateType nextStateType,
 		std::vector<Player>& players,
 		Board& board,
 		double pot,

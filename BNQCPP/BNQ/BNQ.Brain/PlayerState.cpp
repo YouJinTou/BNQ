@@ -3,6 +3,7 @@
 
 PlayerState::PlayerState(
 	std::shared_ptr<State> prevState,
+	StateType::StateType nextStateType,
 	PlayerStrategy* strategy,
 	std::vector<Player>& players,
 	Board& board,
@@ -12,14 +13,9 @@ PlayerState::PlayerState(
 	Street street,
 	double wagerToCall,
 	double playerWager) :
-	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState),
+	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState, nextStateType),
 	strategy(strategy)
 {
-}
-
-StateType::StateType PlayerState::NextState()
-{
-	return IsClosingAction(ToAct()) ? StateType::Chance : StateType::PlayerAction;
 }
 
 StateType::StateType PlayerState::Type() const

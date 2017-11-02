@@ -104,7 +104,25 @@ StateType::StateType Node::CurrentState() const
 
 StateType::StateType Node::NextState() const
 {
-	return statePtr.get()->NextState();
+	return statePtr.get()->NextStateType();
+}
+
+static int counter = 0;
+
+int GetDebugState(int size)
+{
+	switch (counter)
+	{
+	case 0: return 0;
+	case 1: return 1;
+	case 2: return 0;
+	case 3: return 2;
+	case 4: return 0;
+	case 5: return 2;
+	case 6: return 1;
+	default:
+		return std::rand() % size;
+	}
 }
 
 void Node::SimulateRecursive(std::shared_ptr<State> statePtr)
@@ -121,7 +139,10 @@ void Node::SimulateRecursive(std::shared_ptr<State> statePtr)
 	}
 
 	auto nextStates = StateFactory::CreateStates(statePtr);
-	auto nextState = nextStates[std::rand() % nextStates.size()];
-
+	int i = GetDebugState(nextStates.size());
+	auto nextState = nextStates[i]; // nextStates[std::rand() % nextStates.size()];
+	counter++;
 	SimulateRecursive(nextState);
 }
+
+

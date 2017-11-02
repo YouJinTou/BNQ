@@ -6,6 +6,7 @@
 
 ChanceState::ChanceState(
 	std::shared_ptr<State> prevState,
+	StateType::StateType nextStateType,
 	std::vector<Player>& players,
 	Board& board,
 	double pot,
@@ -14,18 +15,13 @@ ChanceState::ChanceState(
 	Street street,
 	double wagerToCall,
 	double playerWager) :
-	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState)
+	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState, nextStateType)
 {
 }
 
 StateType::StateType ChanceState::Type() const
 {
 	return StateType::Chance;
-}
-
-StateType::StateType ChanceState::NextState()
-{
-	return NextToAct().IsHero() ? StateType::PlayerAction : StateType::PlayerAction;
 }
 
 void ChanceState::SetValue()

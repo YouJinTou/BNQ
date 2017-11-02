@@ -24,6 +24,7 @@ int main()
 
 	auto rootState = std::make_shared<PlayerState>(
 		nullptr,
+		StateType::PlayerAction,
 		&VillainStrategy(),
 		players,
 		board,

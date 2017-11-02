@@ -1,6 +1,8 @@
 #include "FinalState.h"
 
-FinalState::FinalState(std::shared_ptr<State> prevState,
+FinalState::FinalState(
+	std::shared_ptr<State> prevState,
+	StateType::StateType nextStateType,
 	std::vector<Player>& players,
 	Board& board,
 	double pot,
@@ -8,13 +10,8 @@ FinalState::FinalState(std::shared_ptr<State> prevState,
 	Position::Position lastBettor,
 	Street street,
 	double wagerToCall) :
-	State(players, board, pot, NoLastBettor, NoLastBettor, Street::River, 0.0, 0.0, prevState)
+	State(players, board, pot, NoLastBettor, NoLastBettor, Street::River, 0.0, 0.0, prevState, StateType::None)
 {
-}
-
-StateType::StateType FinalState::NextState()
-{
-	return StateType::None;
 }
 
 StateType::StateType FinalState::Type() const

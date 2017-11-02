@@ -7,6 +7,7 @@ class FinalState : public State
 public:
 	FinalState(
 		std::shared_ptr<State> prevState,
+		StateType::StateType nextStateType,
 		std::vector<Player>& players,
 		Board& board,
 		double pot,
@@ -14,7 +15,6 @@ public:
 		Position::Position lastBettor,
 		Street street,
 		double wagerToCall);
-	StateType::StateType NextState();
 	StateType::StateType Type() const;
 private:
 };
