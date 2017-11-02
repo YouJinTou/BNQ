@@ -22,6 +22,8 @@ struct Board
 	void SetRiver(Card::Card river);
 	Card::Card NextRandomCard() const;
 	bool AddNextCard(Card::Card card);
+public:
+	friend std::ostream& operator<<(std::ostream& os, const Board& board);
 private:
 	FlopCards flop;
 	Card::Card turn;

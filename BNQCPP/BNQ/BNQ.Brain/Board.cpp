@@ -100,3 +100,10 @@ bool Board::AddNextCard(Card::Card card)
 
 	return true;
 }
+
+std::ostream& operator<<(std::ostream& os, const Board& board)
+{
+	os << board.flop << " | " << board.turn << " | " << board.river << std::endl;
+
+	return os;
+}

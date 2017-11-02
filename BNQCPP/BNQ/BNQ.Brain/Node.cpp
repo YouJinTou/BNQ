@@ -129,6 +129,8 @@ void Node::SimulateRecursive(std::shared_ptr<State> statePtr)
 {
 	State* state = statePtr.get();
 
+	std::cout << *state << std::endl;
+
 	if (state->IsFinal())
 	{
 		state->SetValue();
