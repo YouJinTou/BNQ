@@ -11,7 +11,7 @@ State::State() :
 }
 
 State::State(
-	std::vector<Player>& players, 
+	std::vector<Player>& players,
 	std::shared_ptr<Board> board,
 	double pot,
 	Position::Position seatToAct,
@@ -98,8 +98,8 @@ Position::Position State::SeatToAct() const
 
 void State::SetSeatToAct()
 {
-	seatToAct = nextStateType == StateType::Final ? 
-		Position::None : 
+	seatToAct = nextStateType == StateType::Final ?
+		Position::None :
 		NextToAct().Seat();
 }
 
@@ -162,6 +162,11 @@ void State::SetPlayerWager(double wager)
 
 bool State::IsFinal() const
 {
+	if (nextStateType == StateType::Final)
+	{
+		return true;
+	}
+
 	bool allPassiveActions = true;
 	bool allFolded = true;
 	bool lastBettorExists = lastBettor != NoLastBettor;
@@ -211,6 +216,11 @@ bool State::IsClosingAction(const Player& player) const
 				if (isClosingAction && players[p].LastAction() != Action::Fold)
 				{
 					isClosingAction = playerIndex == p;
+
+					if (isClosingAction)
+					{
+						break;
+					}
 				}
 			}
 
@@ -243,6 +253,11 @@ bool State::IsClosingAction(const Player& player) const
 		if (isClosingAction && players[p].LastAction() != Action::Fold)
 		{
 			isClosingAction = playerIndex == p;
+
+			if (isClosingAction)
+			{
+				break;
+			}
 		}
 	}
 
@@ -263,7 +278,7 @@ State& State::operator=(const State& rhs)
 
 std::ostream& operator<<(std::ostream& os, const State& state)
 {
-	os << state.GetBoard(); 
+	os << state.GetBoard();
 	os << "Pot: " << state.pot << std::endl;
 	os << "Last bettor: " << state.lastBettor << std::endl;
 	os << "Last bet: " << state.wagerToCall << std::endl;
@@ -289,6 +304,29 @@ bool State::FacingCheck() const
 
 const Player& State::NextToAct() const
 {
+	bool newRound = true;
+
+	for (auto& player : players)
+	{
+		if (player.LastAction() != Action::Fold)
+		{
+			newRound = newRound && player.LastAction() == Action::Waiting;
+		}
+	}
+
+	if (newRound)
+	{
+		for (auto& player : players)
+		{
+			if (player.LastAction() == Action::Waiting)
+			{
+				return player;
+			}
+		}
+
+		assert(0);
+	}
+
 	bool lastBettorExists = lastBettor != NoLastBettor;
 
 	if (lastBettorExists)
@@ -314,7 +352,7 @@ const Player& State::NextToAct() const
 				if (player.Seat() > seatToAct && player.LastAction() != Action::Fold)
 				{
 					return player;
-				}				
+				}
 			}
 
 			for (auto& player : players)
@@ -326,7 +364,7 @@ const Player& State::NextToAct() const
 			}
 
 			assert(0);
-		}		
+		}
 	}
 
 	for (auto& player : players)
