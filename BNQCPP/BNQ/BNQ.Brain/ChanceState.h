@@ -18,6 +18,6 @@ public:
 		double wagerToCall,
 		double playerWager);
 	StateType::StateType Type() const;
-	void SetValue();
+	void SetValue(bool isFinal = false);
 private:
 };

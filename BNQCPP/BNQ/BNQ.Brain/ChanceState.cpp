@@ -24,7 +24,7 @@ StateType::StateType ChanceState::Type() const
 	return StateType::Chance;
 }
 
-void ChanceState::SetValue()
+void ChanceState::SetValue(bool isFinal)
 {
 	this->value = 0.0;
 }

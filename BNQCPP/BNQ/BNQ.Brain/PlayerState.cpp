@@ -23,9 +23,8 @@ StateType::StateType PlayerState::Type() const
 	return StateType::PlayerAction;
 }
 
-void PlayerState::SetValue()
+void PlayerState::SetValue(bool isFinal)
 {
-	bool isFinal = IsFinal();
 	const Player& toAct = ToAct();
 	bool isHero = toAct.IsHero();
 	Action action = toAct.LastAction();

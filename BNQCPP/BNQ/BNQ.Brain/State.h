@@ -26,7 +26,7 @@ public:
 		std::shared_ptr<State> prevState,
 		StateType::StateType nextStateType);
 	virtual StateType::StateType Type() const = 0;
-	virtual void SetValue() = 0;
+	virtual void SetValue(bool isFinal = false) = 0;
 public:
 	std::shared_ptr<State> PrevState();
 	StateType::StateType NextStateType() const;
