@@ -1,7 +1,9 @@
+#include <stdint.h>
+
 #include "Action.h"
-#include "PlayerState.h"
 #include "ChanceState.h"
 #include "HeroStrategy.h"
+#include "PlayerState.h"
 #include "StateFactory.h"
 #include "StateType.h"
 #include "Street.h"
@@ -66,43 +68,50 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateChanceStates(std::share
 {
 	int minCardPow = 4; // Card::c2;
 	int maxCardPow = 55; // Card::sA;
-	Board& board = statePtr.get()->GetBoard();
+	auto board = statePtr.get()->GetBoard();
 	std::vector<std::shared_ptr<State> > chanceStates;
-	Street street = board.Turn() == Card::Card::None ? Street::Turn : Street::River;
+	Street street = board->Turn() == Card::Card::None ? Street::Turn : Street::River;
 	State* state = statePtr.get();
+	const Hand heroHand = state->Hero().GetHand();
+	uint64_t mask = 1;
 
 	for (int c = minCardPow; c <= maxCardPow; c++)
 	{
-		if (board.AddNextCard((Card::Card)(1 << c)))
+		auto newBoard = std::make_shared<Board>(*board);
+		Card::Card nextCard = (Card::Card)(mask << c);
+		bool cardAvailable = ((heroHand & nextCard) == 0) && newBoard->AddNextCard(nextCard);
+
+		if (!cardAvailable)
 		{
-			auto chanceState = std::make_shared<ChanceState>(
-				statePtr,
-				StateType::PlayerAction,
-				state->Players(),
-				board,
-				state->Pot(),
-				state->SeatToAct(),
-				state->LastBettor(),
-				street,
-				state->WagerToCall(),
-				state->PlayerWager());
-
-			for (auto& player : chanceState->Players())
-			{
-				if (player.LastAction() != Action::Fold)
-				{
-					player.SetLastAction(Action::Waiting);
-				}
-			}
-
-			chanceState->SetWagerToCall(0.0);
-			chanceState->SetPlayerWager(0.0);
-			chanceState->SetValue();
-			chanceState->SetSeatToAct();
-			chanceState->SetLastBettor(Position::Position::None);
-
-			chanceStates.emplace_back(chanceState);
+			continue;
 		}
+
+		auto chanceState = std::make_shared<ChanceState>(
+			statePtr,
+			StateType::PlayerAction,
+			state->Players(),
+			newBoard,
+			state->Pot(),
+			state->SeatToAct(),
+			state->LastBettor(),
+			street,
+			state->WagerToCall(),
+			state->PlayerWager());
+
+		for (auto& player : chanceState->Players())
+		{
+			if (player.LastAction() != Action::Fold)
+			{
+				player.SetLastAction(Action::Waiting);
+			}
+		}
+
+		chanceState->SetWagerToCall(0.0);
+		chanceState->SetPlayerWager(0.0);
+		chanceState->SetValue();
+		chanceState->SetLastBettor(Position::Position::None);
+
+		chanceStates.emplace_back(chanceState);
 	}
 
 	return chanceStates;

@@ -6,7 +6,7 @@ PlayerState::PlayerState(
 	StateType::StateType nextStateType,
 	PlayerStrategy* strategy,
 	std::vector<Player>& players,
-	Board& board,
+	std::shared_ptr<Board> board,
 	double pot,
 	Position::Position seatToAct,
 	Position::Position lastBettor,

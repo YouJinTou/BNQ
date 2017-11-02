@@ -17,7 +17,7 @@ int main()
 		Player(Position::MP1, 100),
 		Player(Position::BB, 100),
 		Player(Position::BUT, 100),
-		Player(Position::CO, 100, true, Card::c2 | Card::cJ),
+		Player(Position::CO, 100, true, Card::s3 | Card::cJ),
 	};
 	Board board = Board(Card::c2 | Card::hJ | Card::dA);
 	std::sort(players.begin(), players.end());
@@ -27,7 +27,7 @@ int main()
 		StateType::PlayerAction,
 		&VillainStrategy(),
 		players,
-		board,
+		std::make_shared<Board>(board),
 		3.0,
 		Position::Position::BB,
 		Position::Position::None,

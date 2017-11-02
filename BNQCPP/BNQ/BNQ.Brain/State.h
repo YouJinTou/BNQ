@@ -15,7 +15,7 @@ class State
 public:
 	State();
 	State(std::vector<Player>& players,
-		Board& board,
+		std::shared_ptr<Board> board,
 		double pot,
 		Position::Position seatToAct,
 		Position::Position lastBettor,
@@ -30,7 +30,7 @@ public:
 	std::shared_ptr<State> PrevState();
 	StateType::StateType NextStateType() const;
 	void SetNextStateType(StateType::StateType nextStateType);
-	Board& GetBoard();
+	std::shared_ptr<Board> GetBoard();
 	double Pot() const;
 	void SetPot(double wager);
 	Position::Position SeatToAct() const;
@@ -39,6 +39,7 @@ public:
 	void SetLastBettor(Position::Position position);
 	Player& ToAct();
 	std::vector<Player>& Players();
+	const Player& Hero() const;
 	Street CurrentStreet() const;
 	void SetStreet(Street street);
 	double WagerToCall() const;
@@ -57,7 +58,7 @@ protected:
 	std::shared_ptr<State> prevState;
 	StateType::StateType nextStateType;
 	std::vector<Player> players;
-	Board& board;
+	std::shared_ptr<Board> board;
 	double pot;
 	Position::Position seatToAct;
 	Position::Position lastBettor;

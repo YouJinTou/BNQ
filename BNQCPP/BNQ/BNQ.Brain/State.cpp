@@ -6,13 +6,13 @@
 #include "State.h"
 
 State::State() :
-	board(Board())
+	board(std::make_shared<Board>(Board()))
 {
 }
 
 State::State(
 	std::vector<Player>& players, 
-	Board& board,
+	std::shared_ptr<Board> board,
 	double pot,
 	Position::Position seatToAct,
 	Position::Position lastBettor,
@@ -39,6 +39,23 @@ std::vector<Player>& State::Players()
 	return players;
 }
 
+const Player& State::Hero() const
+{
+	const Player* heroPtr = nullptr;
+
+	for (auto& player : players)
+	{
+		if (player.IsHero())
+		{
+			heroPtr = &player;
+
+			break;
+		}
+	}
+
+	return *heroPtr;
+}
+
 std::shared_ptr<State> State::PrevState()
 {
 	return prevState;
@@ -54,7 +71,7 @@ void State::SetNextStateType(StateType::StateType nextStateType)
 	this->nextStateType = nextStateType;
 }
 
-Board& State::GetBoard()
+std::shared_ptr<Board> State::GetBoard()
 {
 	return board;
 }
@@ -157,7 +174,7 @@ bool State::IsFinal() const
 		allFolded = allFolded && lastAction == Action::Fold;
 	}
 
-	bool isRiver = board.River() != Card::None;
+	bool isRiver = board->River() != Card::None;
 	bool isFinal = (allPassiveActions && isRiver) || allFolded;
 
 	return isFinal;

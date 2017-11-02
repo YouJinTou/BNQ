@@ -18,6 +18,7 @@ public:
 	Action LastAction() const;
 	void SetLastAction(Action action);
 	void SetStack(double wager);
+	Hand GetHand() const;
 public:
 	bool operator<(const Player& other);
 private:

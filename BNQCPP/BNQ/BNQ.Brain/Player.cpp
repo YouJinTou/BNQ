@@ -43,6 +43,11 @@ void Player::SetStack(double wager)
 	stack = (stack - wager) < 0.0 ? 0.0 : stack - wager;
 }
 
+Hand Player::GetHand() const
+{
+	return hand;
+}
+
 bool Player::operator<(const Player& other)
 {
 	return seat < other.seat;
