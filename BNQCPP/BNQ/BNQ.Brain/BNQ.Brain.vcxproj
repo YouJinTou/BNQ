@@ -115,7 +115,6 @@
     <ClInclude Include="Board.h" />
     <ClInclude Include="Card.h" />
     <ClInclude Include="ChanceState.h" />
-    <ClInclude Include="ChoiceState.h" />
     <ClInclude Include="HeroStrategy.h" />
     <ClInclude Include="MCTS.h" />
     <ClInclude Include="Node.h" />
@@ -133,7 +132,6 @@
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="ChanceState.cpp" />
-    <ClCompile Include="ChoiceState.cpp" />
     <ClCompile Include="HeroStrategy.cpp" />
     <ClCompile Include="MCTS.cpp" />
     <ClCompile Include="Node.cpp" />

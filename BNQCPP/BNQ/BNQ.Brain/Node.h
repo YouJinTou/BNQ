@@ -5,8 +5,6 @@
 #include <vector>
 
 #include "PlayerState.h"
-#include "ChoiceState.h"
-#include "PlayerState.h"
 #include "State.h"
 
 class Node

@@ -4,10 +4,9 @@ namespace StateType
 {
 	enum StateType
 	{
+		None,
 		Chance,
-		Choice,
 		Final,
-		PlayerAction,
-		None
+		PlayerAction
 	};
 }

@@ -1,7 +1,6 @@
 #include <assert.h>
 
 #include "ChanceState.h"
-#include "ChoiceState.h"
 #include "FinalState.h"
 #include "PlayerState.h"
 #include "State.h"
