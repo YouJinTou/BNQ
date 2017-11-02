@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -30,6 +31,7 @@ public:
 	std::shared_ptr<State> PrevState();
 	StateType::StateType NextStateType() const;
 	void SetNextStateType(StateType::StateType nextStateType);
+	const Board& GetBoard() const;
 	std::shared_ptr<Board> GetBoard();
 	double Pot() const;
 	void SetPot(double wager);
@@ -52,6 +54,7 @@ public:
 	double Value() const;
 public:
 	State& operator=(const State& rhs);
+	friend std::ostream& operator<<(std::ostream& os, const State& state);
 protected:
 	static constexpr Position::Position NoLastBettor = Position::Position::None;
 protected:

@@ -71,6 +71,11 @@ void State::SetNextStateType(StateType::StateType nextStateType)
 	this->nextStateType = nextStateType;
 }
 
+const Board& State::GetBoard() const
+{
+	return *board;
+}
+
 std::shared_ptr<Board> State::GetBoard()
 {
 	return board;
@@ -93,7 +98,9 @@ Position::Position State::SeatToAct() const
 
 void State::SetSeatToAct()
 {
-	seatToAct = NextToAct().Seat();
+	seatToAct = nextStateType == StateType::Final ? 
+		Position::None : 
+		NextToAct().Seat();
 }
 
 Position::Position State::LastBettor() const
@@ -161,6 +168,11 @@ bool State::IsFinal() const
 
 	for (auto& player : players)
 	{
+		if (player.IsHero() && player.LastAction() == Action::Fold)
+		{
+			return true;
+		}
+
 		bool isLastBettor = lastBettorExists && player.Seat() == lastBettor;
 
 		if (isLastBettor)
@@ -171,7 +183,7 @@ bool State::IsFinal() const
 		Action lastAction = player.LastAction();
 		bool isLastActionPassive = lastAction == Action::Call || lastAction == Action::Check;
 		allPassiveActions = allPassiveActions && isLastActionPassive;
-		allFolded = allFolded && lastAction == Action::Fold;
+		allFolded = allFolded && !player.IsHero() && lastAction == Action::Fold;
 	}
 
 	bool isRiver = board->River() != Card::None;
@@ -249,6 +261,27 @@ State& State::operator=(const State& rhs)
 	return *this;
 }
 
+std::ostream& operator<<(std::ostream& os, const State& state)
+{
+	os << state.GetBoard(); 
+	os << "Pot: " << state.pot << std::endl;
+	os << "Last bettor: " << state.lastBettor << std::endl;
+	os << "Last bet: " << state.wagerToCall << std::endl;
+	os << "-------------------------------------------------" << std::endl;
+
+	for (auto& player : state.players)
+	{
+		os << "Player: " << player.Seat() << std::endl;
+		os << "Stack: " << player.Stack() << std::endl;
+		os << "Last action: " << player.LastAction() << std::endl;
+		os << std::endl;
+	}
+
+	os << std::endl << std::endl;
+
+	return os;
+}
+
 bool State::FacingCheck() const
 {
 	return wagerToCall == 0.0;
@@ -299,6 +332,14 @@ const Player& State::NextToAct() const
 	for (auto& player : players)
 	{
 		if (player.Seat() > seatToAct && player.LastAction() != Action::Fold)
+		{
+			return player;
+		}
+	}
+
+	for (auto& player : players)
+	{
+		if (player.LastAction() != Action::Fold)
 		{
 			return player;
 		}
