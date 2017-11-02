@@ -143,8 +143,8 @@ std::shared_ptr<State> StateFactory::CreateBet50State(std::shared_ptr<State> sta
 	bet50State->SetPlayerWager(betSize);
 	bet50State->SetPot(betSize);
 	bet50State->SetValue();
-	bet50State->SetSeatToAct();
 	bet50State->SetLastBettor(player.Seat());
+	bet50State->SetSeatToAct();
 
 	return bet50State;
 }
@@ -168,15 +168,18 @@ std::shared_ptr<State> StateFactory::CreateCallState(std::shared_ptr<State> stat
 	Player& player = callState->ToAct();
 	double callSize = state->WagerToCall();
 	bool isClosingAction = callState->IsClosingAction(player);
+	bool isFinal = isClosingAction && callState->GetBoard()->River() != Card::None;
+	auto nextStateType = isFinal ? StateType::Final : 
+		isClosingAction ? StateType::Chance : StateType::PlayerAction;
 
 	player.SetLastAction(Action::Call);
 	player.SetStack(callSize);
-	callState->SetNextStateType(isClosingAction ? StateType::Chance : StateType::PlayerAction);
+	callState->SetNextStateType(nextStateType);
 	callState->SetPot(callSize);
 	callState->SetPlayerWager(0.0);
 	callState->SetValue();
-	callState->SetSeatToAct();
 	callState->SetLastBettor(isClosingAction ? Position::Position::None : state->LastBettor());
+	callState->SetSeatToAct();
 	callState->SetWagerToCall(isClosingAction ? 0.0 : callSize);
 
 	return callState;
@@ -200,13 +203,16 @@ std::shared_ptr<State> StateFactory::CreateCheckState(std::shared_ptr<State> sta
 		state->PlayerWager());
 	Player& player = checkState->ToAct();
 	bool isClosingAction = checkState->IsClosingAction(player);
+	bool isFinal = isClosingAction && checkState->GetBoard()->River() != Card::None;
+	auto nextStateType = isFinal ? StateType::Final :
+		isClosingAction ? StateType::Chance : StateType::PlayerAction;
 
 	player.SetLastAction(Action::Check);
-	checkState->SetNextStateType(isClosingAction ? StateType::Chance : StateType::PlayerAction);
+	checkState->SetNextStateType(nextStateType);
 	checkState->SetPlayerWager(0.0);
 	checkState->SetValue();
-	checkState->SetSeatToAct();
 	checkState->SetLastBettor(isClosingAction ? Position::Position::None : state->LastBettor());
+	checkState->SetSeatToAct();
 
 	return checkState;
 }
@@ -229,13 +235,16 @@ std::shared_ptr<State> StateFactory::CreateFoldState(std::shared_ptr<State> stat
 		state->PlayerWager());
 	Player& player = foldState->ToAct();
 	bool isClosingAction = foldState->IsClosingAction(player);
+	bool isFinal = isClosingAction && foldState->IsFinal();
+	auto nextStateType = isFinal ? StateType::Final :
+		isClosingAction ? StateType::Chance : StateType::PlayerAction;
 
 	player.SetLastAction(Action::Fold);
-	foldState->SetNextStateType(isClosingAction ? StateType::Chance : StateType::PlayerAction);
+	foldState->SetNextStateType(nextStateType);
 	foldState->SetPlayerWager(0.0);
 	foldState->SetValue();
-	foldState->SetSeatToAct();
 	foldState->SetLastBettor(isClosingAction ? Position::Position::None : state->LastBettor());
+	foldState->SetSeatToAct();
 	foldState->SetWagerToCall(isClosingAction ? 0.0 : state->WagerToCall());
 
 	return foldState;
@@ -247,7 +256,7 @@ std::shared_ptr<State> StateFactory::CreateRaise50State(std::shared_ptr<State> s
 	bool isHero = state->ToAct().IsHero();
 	auto raise50State = std::make_shared<PlayerState>(
 		statePtr,
-		state->NextStateType(),
+		StateType::PlayerAction,
 		Strategy(isHero).get(),
 		state->Players(),
 		state->GetBoard(),
@@ -261,16 +270,14 @@ std::shared_ptr<State> StateFactory::CreateRaise50State(std::shared_ptr<State> s
 	double pot = raise50State->Pot();
 	double wagerToCall = state->WagerToCall();
 	double raiseSize = 0.5 * (2 * wagerToCall + pot);
-	bool isClosingAction = raise50State->IsClosingAction(player);
 
 	player.SetLastAction(Action::Raise50);
 	player.SetStack(raiseSize);
-	raise50State->SetNextStateType(isClosingAction ? StateType::Chance : StateType::PlayerAction);
 	raise50State->SetPot(raiseSize);
 	raise50State->SetPlayerWager(raiseSize);
 	raise50State->SetValue();
-	raise50State->SetSeatToAct();
 	raise50State->SetLastBettor(player.Seat());
+	raise50State->SetSeatToAct();
 	raise50State->SetWagerToCall(raiseSize);
 
 	return raise50State;
