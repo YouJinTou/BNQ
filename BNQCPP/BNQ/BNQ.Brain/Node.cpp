@@ -5,10 +5,10 @@
 #include "StateFactory.h"
 #include "VillainStrategy.h"
 
-int Node::TotalVisits = 0;
+int Node::IterationsCount = 0;
 
-Node::Node(std::shared_ptr<Node> prev, std::shared_ptr<State> state) :
-	prev(prev),
+Node::Node(Node* prev, std::shared_ptr<State> state) :
+	prevPtr(prev),
 	statePtr(state)
 {
 }
@@ -25,8 +25,13 @@ bool Node::Visited() const
 
 double Node::UCB() const
 {
+	if (visits == 0)
+	{
+		return DBL_MAX;
+	}
+
 	double exploitationTerm = value / visits;
-	double explorationTerm = std::sqrt(std::log(TotalVisits) / visits);
+	double explorationTerm = std::sqrt(std::log(IterationsCount) / visits);
 	double UCB = exploitationTerm + ExplorationConstant * explorationTerm;
 
 	return UCB;
@@ -47,7 +52,7 @@ void Node::UpdateValue(double value)
 	this->value += value;
 }
 
-Node Node::Expand()
+std::shared_ptr<Node> Node::Expand()
 {
 	if (!IsLeaf() || children.size() > 0)
 	{
@@ -58,7 +63,9 @@ Node Node::Expand()
 
 	for (auto& state : states)
 	{
-		children.emplace_back(Node(std::make_shared<Node>(*this), state));
+		auto newNode = std::make_shared<Node>(this, state);
+
+		children.emplace_back(newNode);
 	}
 
 	return children[0];
@@ -78,11 +85,13 @@ void Node::Backpropagate()
 		current->UpdateVisits();
 		current->UpdateValue(current->statePtr->Value());
 
-		current = current->prev.get();
+		current = current->prevPtr.get();
 	}
+
+	IterationsCount++;
 }
 
-std::vector<Node>& Node::Children()
+std::vector<std::shared_ptr<Node> >& Node::Children()
 {
 	return children;
 }

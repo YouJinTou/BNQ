@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 #include "Card.h"
@@ -34,7 +35,7 @@ int main()
 		Street::Flop,
 		0.0,
 		0.0);
-	Node rootNode = Node(nullptr, rootState);
+	auto rootNode = Node(nullptr, rootState);
 	MCTS mcts = MCTS(rootNode);
 	Action bestAction = mcts.Go();
 

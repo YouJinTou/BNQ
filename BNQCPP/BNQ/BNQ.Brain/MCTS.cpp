@@ -3,9 +3,9 @@
 
 #include "MCTS.h"
 
-MCTS::MCTS(const Node& root) :
+MCTS::MCTS(Node root) :
 	root(root),
-	current(root)
+	current(&root)
 {
 	std::srand(std::time(NULL));
 }
@@ -14,16 +14,17 @@ Action MCTS::Go()
 {
 	while (true)
 	{
-		current = root;
+		current = &root;
 
 		Select();
 
-		if (current.Visited())
+		if (current->Visited())
 		{
 			Expand();
 		}
 
 		Simulate();
+
 		Backpropagate();
 	}
 
@@ -32,37 +33,42 @@ Action MCTS::Go()
 
 void MCTS::Select()
 {
-	if (current.IsLeaf())
+	if (current->IsLeaf())
 	{
 		return;
 	}
 
 	double currentBest = DBL_MIN;
-	Node bestNode;
+	std::shared_ptr<Node>bestNode;
 
-	for (const Node& child : current.Children())
+	for (auto child : current->Children())
 	{
-		if (currentBest < child.Value())
+		auto childUCB = child->UCB();
+
+		if (currentBest < childUCB)
 		{
-			currentBest = child.Value();
+			currentBest = childUCB;
 			bestNode = child;
 		}
 	}
 
-	current = bestNode;
+	current = bestNode.get();
+
+	Select();
 }
 
 void MCTS::Expand()
 {
-	current = current.Expand();
+	auto firstChild = current->Expand();
+	current = firstChild.get();
 }
 
 void MCTS::Simulate()
 {
-	current.Simulate();
+	current->Simulate();
 }
 
 void MCTS::Backpropagate()
 {
-	current.Backpropagate();
+	current->Backpropagate();
 }
