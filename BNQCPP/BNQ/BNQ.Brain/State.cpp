@@ -19,26 +19,6 @@ State::State(
 	Position::Position lastBettor,
 	Street street,
 	double wagerToCall,
-	double playerWager) :
-	players(players),
-	board(board),
-	pot(pot),
-	seatToAct(seatToAct),
-	lastBettor(lastBettor),
-	street(street),
-	wagerToCall(wagerToCall),
-	playerWager(playerWager)
-{
-}
-
-State::State(
-	std::vector<Player>& players, 
-	Board& board,
-	double pot,
-	Position::Position seatToAct,
-	Position::Position lastBettor,
-	Street street,
-	double wagerToCall,
 	double playerWager,
 	std::shared_ptr<State> prevState) :
 	players(players),

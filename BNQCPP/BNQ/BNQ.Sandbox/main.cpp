@@ -23,6 +23,7 @@ int main()
 	std::sort(players.begin(), players.end());
 
 	auto rootState = std::make_shared<PlayerState>(
+		nullptr,
 		&VillainStrategy(),
 		players,
 		board,

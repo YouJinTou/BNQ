@@ -2,21 +2,6 @@
 #include "ChanceState.h"
 
 PlayerState::PlayerState(
-	PlayerStrategy* strategy,
-	std::vector<Player>& players,
-	Board& board,
-	double pot,
-	Position::Position seatToAct,
-	Position::Position lastBettor,
-	Street street,
-	double wagerToCall,
-	double playerWager) :
-	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager),
-	strategy(strategy)
-{
-}
-
-PlayerState::PlayerState(
 	std::shared_ptr<State> prevState,
 	PlayerStrategy* strategy,
 	std::vector<Player>& players,
