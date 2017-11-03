@@ -4,6 +4,8 @@
 #include <memory>
 #include <vector>
 
+#include <omp\HandEvaluator.h>
+
 #include "Action.h"
 #include "Board.h"
 #include "Player.h"
@@ -57,6 +59,7 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const State& state);
 protected:
 	static constexpr Position::Position NoLastBettor = Position::Position::None;
+	static const omp::HandEvaluator evaluator;
 protected:
 	std::shared_ptr<State> prevState;
 	StateType::StateType nextStateType;
