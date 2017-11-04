@@ -77,8 +77,8 @@ void Board::SetRiver(Card::Card river)
 
 Card::Card Board::NextRandomCard() const
 {
-	int minCardPow = 1; // Card::s2;
-	int maxCardPow = 51; // Card::dA;
+	int minCardPow = Constants::PowerTwoIndices[Card::s2];
+	int maxCardPow = Constants::PowerTwoIndices[Card::dA];
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> dis(minCardPow, maxCardPow + 1);

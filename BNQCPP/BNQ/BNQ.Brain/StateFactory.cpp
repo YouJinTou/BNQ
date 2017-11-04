@@ -3,6 +3,7 @@
 
 #include "Action.h"
 #include "ChanceState.h"
+#include "Constants.h"
 #include "HeroStrategy.h"
 #include "PlayerState.h"
 #include "StateFactory.h"
@@ -69,8 +70,8 @@ std::vector<std::shared_ptr<State>> StateFactory::CreatePlayerStates(std::shared
 
 std::vector<std::shared_ptr<State> > StateFactory::CreateChanceStates(std::shared_ptr<State> statePtr)
 {
-	int minCardPow = 1; // Card::s2;
-	int maxCardPow = 51; // Card::dA;
+	int minCardPow = Constants::PowerTwoIndices[Card::s2];
+	int maxCardPow = Constants::PowerTwoIndices[Card::dA];
 	auto board = statePtr.get()->GetBoard();
 	std::vector<std::shared_ptr<State> > chanceStates;
 	Street street = board->Turn() == Card::Card::None ? Street::Turn : Street::River;
