@@ -3,7 +3,7 @@
 #include "Node.h"
 #include "PlayerState.h"
 #include "StateFactory.h"
-#include "VillainStrategy.h"
+#include "BalancedStrategy.h"
 
 int Node::IterationsCount = 0;
 

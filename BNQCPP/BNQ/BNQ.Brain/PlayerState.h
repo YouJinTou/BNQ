@@ -1,7 +1,5 @@
 #pragma once
 
-#include "HandEvaluator\Hand.h"
-
 #include "State.h"
 
 class PlayerState : public State

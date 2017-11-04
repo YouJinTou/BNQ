@@ -2,7 +2,7 @@
 
 #include "PlayerStrategy.h"
 
-class VillainStrategy : public PlayerStrategy
+class BalancedStrategy : public PlayerStrategy
 {
 public:
 	void UpdateRange(const State& state);

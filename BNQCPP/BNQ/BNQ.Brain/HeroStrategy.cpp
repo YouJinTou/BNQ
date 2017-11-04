@@ -9,5 +9,5 @@ void HeroStrategy::UpdateRange(const State& state)
 
 omp::Hand HeroStrategy::GetShowdownHand() const
 {
-	return omp::Hand();
+	return omp::Hand::empty();
 }

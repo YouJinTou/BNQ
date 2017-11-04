@@ -2,7 +2,7 @@
 #include "ChanceState.h"
 #include "HeroStrategy.h"
 #include "PlayerState.h"
-#include "VillainStrategy.h"
+#include "BalancedStrategy.h"
 
 ChanceState::ChanceState(
 	std::shared_ptr<State> prevState,

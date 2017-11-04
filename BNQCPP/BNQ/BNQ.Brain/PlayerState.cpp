@@ -1,3 +1,5 @@
+#include "HandEvaluator\Hand.h"
+
 #include "ChanceState.h"
 #include "Constants.h"
 #include "PlayerState.h"

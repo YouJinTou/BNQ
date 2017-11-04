@@ -138,7 +138,7 @@
     <ClInclude Include="StateFactory.h" />
     <ClInclude Include="StateType.h" />
     <ClInclude Include="Street.h" />
-    <ClInclude Include="VillainStrategy.h" />
+    <ClInclude Include="BalancedStrategy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp" />

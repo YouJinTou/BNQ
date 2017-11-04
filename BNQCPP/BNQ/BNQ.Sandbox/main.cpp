@@ -10,11 +10,11 @@
 #include "PlayerState.h"
 #include "Position.h"
 #include "State.h"
-#include "VillainStrategy.h"
+#include "BalancedStrategy.h"
 
 int main()
 {
-	VillainStrategy vStrategy;
+	BalancedStrategy vStrategy;
 	HeroStrategy hStrategy;
 	std::vector<Player> players
 	{
