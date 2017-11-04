@@ -119,6 +119,7 @@
     <ClInclude Include="Board.h" />
     <ClInclude Include="Card.h" />
     <ClInclude Include="ChanceState.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="HandEvaluator\Constants.h" />
     <ClInclude Include="HandEvaluator\Hand.h" />
     <ClInclude Include="HandEvaluator\HandEvaluator.h" />
