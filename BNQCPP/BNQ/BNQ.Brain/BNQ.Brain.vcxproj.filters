@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\HandEvaluator">
+      <UniqueIdentifier>{af933258-e181-4577-91cb-babb5387c135}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HandEvaluator">
+      <UniqueIdentifier>{e31a6676-6838-47b8-bc0c-09704702e039}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MCTS.h">
@@ -66,6 +72,21 @@
     <ClInclude Include="PlayerState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="HandEvaluator\Constants.h">
+      <Filter>Header Files\HandEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="HandEvaluator\Hand.h">
+      <Filter>Header Files\HandEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="HandEvaluator\HandEvaluator.h">
+      <Filter>Header Files\HandEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="HandEvaluator\OffsetTable.hxx">
+      <Filter>Header Files\HandEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="HandEvaluator\Util.h">
+      <Filter>Header Files\HandEvaluator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MCTS.cpp">
@@ -100,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="PlayerState.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HandEvaluator\HandEvaluator.cpp">
+      <Filter>Source Files\HandEvaluator</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
