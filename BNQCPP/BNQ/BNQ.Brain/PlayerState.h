@@ -21,8 +21,6 @@ public:
 	StateType::StateType Type() const;
 	void SetValue(bool isFinal = false);
 private:
-	static omp::Hand GetPlayerHand(const Player& player);
-private:
 	double ShowdownValue() const;
 	bool HeroRemains() const;
 };

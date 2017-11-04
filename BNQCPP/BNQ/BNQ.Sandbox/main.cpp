@@ -21,7 +21,7 @@ int main()
 		Player(Position::MP1, 100, &vStrategy),
 		Player(Position::BB, 100, &vStrategy),
 		Player(Position::BUT, 100, &vStrategy),
-		Player(Position::CO, 100, true, Card::s3 | Card::cJ, &hStrategy),
+		Player(Position::CO, 100, true, { Card::s3, Card::cJ }, &hStrategy),
 	};
 	Board board = Board(Card::c2, Card::hJ, Card::dA);
 	std::sort(players.begin(), players.end());

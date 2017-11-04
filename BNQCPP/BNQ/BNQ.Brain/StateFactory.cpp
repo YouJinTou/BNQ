@@ -4,6 +4,7 @@
 #include "Action.h"
 #include "ChanceState.h"
 #include "Constants.h"
+#include "Holding.h"
 #include "PlayerState.h"
 #include "StateFactory.h"
 #include "StateType.h"
@@ -74,7 +75,8 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateChanceStates(std::share
 	std::vector<std::shared_ptr<State> > chanceStates;
 	Street street = board->Turn() == Card::Card::None ? Street::Turn : Street::River;
 	State* state = statePtr.get();
-	const Hand heroHand = state->Hero().GetHand();
+	const Holding heroHolding = state->Hero().GetHolding();
+	auto heroHand = heroHolding.Card1 | heroHolding.Card2;
 	uint64_t mask = 1;
 
 	for (int c = minCardPow; c <= maxCardPow; c++)

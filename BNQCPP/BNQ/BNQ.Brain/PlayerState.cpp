@@ -61,11 +61,6 @@ void PlayerState::SetValue(bool isFinal)
 	}	
 }
 
-omp::Hand PlayerState::GetPlayerHand(const Player& player)
-{
-	return omp::Hand();
-}
-
 double PlayerState::ShowdownValue() const
 {
 	auto boardHand = board->GetBoardAsHand();
@@ -78,7 +73,7 @@ double PlayerState::ShowdownValue() const
 
 	for (auto& player : players)
 	{
-		auto playerHand = boardHand + GetPlayerHand(player);
+		auto playerHand = boardHand + player.GetShowdownHand();
 		currentHandValue = evaluator.evaluate(playerHand);
 		bool isHero = player.IsHero();
 
