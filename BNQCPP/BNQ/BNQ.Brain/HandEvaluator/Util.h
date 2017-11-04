@@ -40,6 +40,23 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 namespace omp {
 
+	static const unsigned long long NibbleMasks[13]
+	{
+		0xF,
+		0xF0,
+		0xF00,
+		0xF000,
+		0xF0000,
+		0xF00000,
+		0xF000000,
+		0xF0000000,
+		0xF00000000,
+		0xF000000000,
+		0xF0000000000,
+		0xF00000000000,
+		0xF000000000000
+	};
+
 inline unsigned countTrailingZeros(unsigned x)
 {
     #if _MSC_VER
@@ -89,6 +106,32 @@ inline unsigned bitCount(unsigned long long x)
     #else
     return __builtin_popcountll(x);
     #endif
+}
+
+inline int lowestCardRank(unsigned long long board)
+{
+	for (size_t mask = 0; mask < 13; mask++)
+	{
+		if ((board & mask) != 0)
+		{
+			return mask;
+		}
+	}
+
+	return 0;
+}
+
+inline int highestCardRank(unsigned long long board)
+{
+	for (size_t mask = 12; mask >= 0; mask--)
+	{
+		if ((board & mask) != 0)
+		{
+			return mask;
+		}
+	}
+
+	return 12;
 }
 
 #if OMP_ASSERT
