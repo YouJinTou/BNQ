@@ -1,13 +1,22 @@
 #include <math.h>
 
+#include "Constants.h"
 #include "HeroStrategy.h"
 #include "State.h"
 
-void HeroStrategy::UpdateRange(const State& state)
+void HeroStrategy::UpdateRange(State& state)
 {
+	lastState = &state;
 }
 
-omp::Hand HeroStrategy::GetShowdownHand() const
+double HeroStrategy::GetShowdownValue() const
 {
-	return omp::Hand::empty();
+	auto board = lastState->GetBoard().get();
+	auto boardAsHand = board->GetBoardAsHand();
+	auto holding = lastState->ToAct().GetHolding();
+
+	return evaluator.evaluate(
+		boardAsHand +
+		omp::Hand(Constants::PowerTwoIndices[holding.Card1]) +
+		omp::Hand(Constants::PowerTwoIndices[holding.Card2]));
 }
