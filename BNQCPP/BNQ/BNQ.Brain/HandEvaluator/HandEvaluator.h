@@ -9,6 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 #ifndef OMP_HAND_EVALUATOR_H
 #define OMP_HAND_EVALUATOR_H
 
+#include "../Board.h"
+
 #include "Util.h"
 #include "Constants.h"
 #include "Hand.h"
@@ -40,6 +42,9 @@ public:
         }
     }
 
+	bool quadsPossible(const Hand& hand) const;
+	bool flushPossible(const Hand& hand, const Board& board) const;
+	bool straightPossible(const Hand& hand, const Board& board) const;
 private:
     static unsigned perfHash(unsigned key)
     {
