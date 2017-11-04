@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HandEvaluator\Hand.h"
+
 #include "State.h"
 #include "PlayerStrategy.h"
 
@@ -23,6 +25,8 @@ public:
 	Action GetAction();
 private:
 	PlayerStrategy* strategy;
+private:
+	static omp::Hand GetPlayerHand(const Player& player);
 private:
 	double ShowdownValue() const;
 	bool HeroRemains() const;

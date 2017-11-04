@@ -1,5 +1,6 @@
-#include "PlayerState.h"
 #include "ChanceState.h"
+#include "Constants.h"
+#include "PlayerState.h"
 
 PlayerState::PlayerState(
 	std::shared_ptr<State> prevState,
@@ -33,6 +34,7 @@ void PlayerState::SetValue(bool isFinal)
 	{
 	case Action::Waiting:
 		this->value = 0.0;
+
 		break;
 	case Action::Bet50:
 		this->value = isFinal && isHero ? pot :
@@ -45,7 +47,7 @@ void PlayerState::SetValue(bool isFinal)
 
 		break;
 	case Action::Check:
-		this->value = isFinal ? ShowdownValue() : 0.0;
+		this->value = isFinal && isHero ? ShowdownValue() : 0.0;
 
 		break;
 	case Action::Fold:
@@ -66,8 +68,49 @@ Action PlayerState::GetAction()
 	return strategy->ExecuteChoice(*this);
 }
 
+omp::Hand PlayerState::GetPlayerHand(const Player& player)
+{
+	return omp::Hand();
+}
+
 double PlayerState::ShowdownValue() const
 {
+	auto boardHand = board->GetBoardAsHand();
+	int currentHandValue = -1;
+	uint16_t bestHandValue = 0;
+	uint16_t heroHandValue = 0;
+	uint16_t tieHandValue = 0;
+	int tieCounter = 1;
+	bool tieWithHeroExists = false;
+
+	for (auto& player : players)
+	{
+		auto playerHand = boardHand + GetPlayerHand(player);
+		currentHandValue = evaluator.evaluate(playerHand);
+		bool isHero = player.IsHero();
+
+		if (isHero)
+		{
+			heroHandValue = currentHandValue;
+		}
+
+		if (currentHandValue == bestHandValue)
+		{
+			tieHandValue = bestHandValue;
+			tieCounter++;
+		}
+		else if (currentHandValue > bestHandValue)
+		{
+			bestHandValue = currentHandValue;
+			currentHandValue = -1;
+		}
+	}
+
+	if (heroHandValue == bestHandValue)
+	{
+		return (tieHandValue == bestHandValue) ? pot / tieCounter : pot;
+	}
+
 	return 0.0;
 }
 

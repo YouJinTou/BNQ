@@ -5,6 +5,8 @@
 #include "PlayerState.h"
 #include "State.h"
 
+const omp::HandEvaluator State::evaluator = omp::HandEvaluator();
+
 State::State() :
 	board(std::make_shared<Board>(Board()))
 {

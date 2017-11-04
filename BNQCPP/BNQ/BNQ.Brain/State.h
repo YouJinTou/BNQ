@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include <omp\HandEvaluator.h>
+#include "HandEvaluator\HandEvaluator.h"
 
 #include "Action.h"
 #include "Board.h"
