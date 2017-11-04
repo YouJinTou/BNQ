@@ -151,6 +151,8 @@ void Node::SimulateRecursive(std::shared_ptr<State> statePtr)
 		return;
 	}
 
+	state->UpdateToActRange();
+
 	auto nextStates = StateFactory::CreateStates(statePtr);
 	//int i = GetDebugState(nextStates.size());
 	//auto nextState = nextStates[i]; 

@@ -150,9 +150,10 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="FinalState.cpp" />
     <ClCompile Include="PlayerState.cpp" />
+    <ClCompile Include="PlayerStrategy.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateFactory.cpp" />
-    <ClCompile Include="VillainStrategy.cpp" />
+    <ClCompile Include="BalancedStrategy.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

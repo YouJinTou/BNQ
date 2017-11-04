@@ -8,6 +8,8 @@
 #include "Position.h"
 #include "PlayerStrategy.h"
 
+class State;
+
 class Player
 {
 public:
@@ -20,6 +22,7 @@ public:
 	Action LastAction() const;
 	void SetLastAction(Action action);
 	void SetStack(double wager);
+	void UpdateRanges(const State& state);
 	Holding GetHolding() const;
 	omp::Hand GetShowdownHand() const;
 public:

@@ -54,6 +54,7 @@ public:
 	bool IsFinal() const;
 	bool IsClosingAction(const Player& player) const;
 	double Value() const;
+	void UpdateToActRange();
 public:
 	State& operator=(const State& rhs);
 	friend std::ostream& operator<<(std::ostream& os, const State& state);

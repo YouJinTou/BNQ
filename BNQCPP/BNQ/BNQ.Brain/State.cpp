@@ -271,9 +271,24 @@ double State::Value() const
 	return value;
 }
 
+void State::UpdateToActRanges()
+{
+	ToAct().UpdateRanges(*this);
+}
+
 State& State::operator=(const State& rhs)
 {
+	prevState = rhs.prevState;
+	nextStateType = rhs.nextStateType;
+	players = rhs.players;
+	board = rhs.board;
 	pot = rhs.pot;
+	seatToAct = rhs.seatToAct;
+	lastBettor = rhs.lastBettor;
+	street = rhs.street;
+	wagerToCall = rhs.wagerToCall;
+	playerWager = rhs.playerWager;
+	value = rhs.value;
 
 	return *this;
 }

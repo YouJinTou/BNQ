@@ -113,9 +113,6 @@
     <ClCompile Include="HeroStrategy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VillainStrategy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Board.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -130,6 +127,12 @@
     </ClCompile>
     <ClCompile Include="HandEvaluator\HandEvaluator.cpp">
       <Filter>Source Files\HandEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="BalancedStrategy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerStrategy.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

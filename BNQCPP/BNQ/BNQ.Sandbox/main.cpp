@@ -14,14 +14,12 @@
 
 int main()
 {
-	BalancedStrategy vStrategy;
-	HeroStrategy hStrategy;
 	std::vector<Player> players
 	{
-		Player(Position::MP1, 100, &vStrategy),
-		Player(Position::BB, 100, &vStrategy),
-		Player(Position::BUT, 100, &vStrategy),
-		Player(Position::CO, 100, true, { Card::s3, Card::cJ }, &hStrategy),
+		Player(Position::MP1, 100, &BalancedStrategy()),
+		Player(Position::BB, 100, &BalancedStrategy()),
+		Player(Position::BUT, 100, &BalancedStrategy()),
+		Player(Position::CO, 100, true, { Card::s3, Card::cJ }, &HeroStrategy()),
 	};
 	Board board = Board(Card::c2, Card::hJ, Card::dA);
 	std::sort(players.begin(), players.end());
