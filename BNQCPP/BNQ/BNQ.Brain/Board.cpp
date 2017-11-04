@@ -1,3 +1,4 @@
+#include "Constants.h"
 #include "Board.h"
 
 Board::Board() :
@@ -115,9 +116,32 @@ omp::Hand Board::GetBoardAsHand() const
 {
 	omp::Hand h = omp::Hand::empty();
 
+	if (flop1 != Card::None)
+	{
+		h += omp::Hand(Constants::PowerTwoIndices[flop1]);
+	}
 
+	if (flop2 != Card::None)
+	{
+		h += omp::Hand(Constants::PowerTwoIndices[flop2]);
+	}
 
-	return omp::Hand();
+	if (flop3 != Card::None)
+	{
+		h += omp::Hand(Constants::PowerTwoIndices[flop3]);
+	}
+
+	if (turn != Card::None)
+	{
+		h += omp::Hand(Constants::PowerTwoIndices[turn]);
+	}
+
+	if (river != Card::None)
+	{
+		h += omp::Hand(Constants::PowerTwoIndices[river]);
+	}
+
+	return h;
 }
 
 std::ostream& operator<<(std::ostream& os, const Board& board)
