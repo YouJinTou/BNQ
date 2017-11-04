@@ -271,7 +271,7 @@ double State::Value() const
 	return value;
 }
 
-void State::UpdateToActRanges()
+void State::UpdateToActRange()
 {
 	ToAct().UpdateRanges(*this);
 }
@@ -401,13 +401,15 @@ const Player& State::NextToAct() const
 	}
 
 	assert(0);
+
+	throw std::logic_error("We must always return a player.");
 }
 
 int State::IndexOf(Position::Position pos) const
 {
 	int index = -1;
 
-	for (int p = 0; p < players.size(); ++p)
+	for (size_t p = 0; p < players.size(); ++p)
 	{
 		if (players[p].Seat() == pos)
 		{
@@ -424,7 +426,7 @@ int State::IndexOf(const Player& player) const
 {
 	int index = -1;
 
-	for (int p = 0; p < players.size(); ++p)
+	for (size_t p = 0; p < players.size(); ++p)
 	{
 		if (players[p].Seat() == player.Seat())
 		{

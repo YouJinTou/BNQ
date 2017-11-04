@@ -66,17 +66,15 @@ void PlayerState::SetValue(bool isFinal)
 double PlayerState::ShowdownValue() const
 {
 	auto boardHand = board->GetBoardAsHand();
-	int currentHandValue = -1;
-	uint16_t bestHandValue = 0;
-	uint16_t heroHandValue = 0;
-	uint16_t tieHandValue = 0;
+	double bestHandValue = 0;
+	double heroHandValue = 0;
+	double tieHandValue = 0;
 	int tieCounter = 1;
 	bool tieWithHeroExists = false;
 
 	for (auto& player : players)
 	{
-		auto playerHand = boardHand + player.GetShowdownHand();
-		currentHandValue = evaluator.evaluate(playerHand);
+		double currentHandValue = player.GetShowdownValue(boardHand);
 		bool isHero = player.IsHero();
 
 		if (isHero)

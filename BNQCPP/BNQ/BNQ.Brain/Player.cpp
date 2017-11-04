@@ -1,6 +1,8 @@
 #include "Constants.h"
 #include "Player.h"
 
+const omp::HandEvaluator Player::evaluator = omp::HandEvaluator();
+
 Player::Player(Position::Position seat, double stack, PlayerStrategy* strategy) :
 	Player(seat, stack, false, { Card::None, Card::None }, strategy)
 {
@@ -45,7 +47,7 @@ void Player::SetStack(double wager)
 	stack = (stack - wager) < 0.0 ? 0.0 : stack - wager;
 }
 
-void Player::UpdateRanges(const State& state)
+void Player::UpdateRanges(State& state)
 {
 	strategy->UpdateRange(state);
 }
@@ -55,16 +57,9 @@ Holding Player::GetHolding() const
 	return holding;
 }
 
-omp::Hand Player::GetShowdownHand() const
+double Player::GetShowdownValue(omp::Hand board) const
 {
-	if (isHero)
-	{
-		return 
-			omp::Hand(Constants::PowerTwoIndices[holding.Card1]) + 
-			omp::Hand(Constants::PowerTwoIndices[holding.Card2]);
-	}
-
-	return strategy->GetShowdownHand();
+	return strategy->GetShowdownValue();
 }
 
 bool Player::operator<(const Player& other)

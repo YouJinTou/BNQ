@@ -7,7 +7,7 @@ MCTS::MCTS(Node root) :
 	root(root),
 	current(&root)
 {
-	std::srand(std::time(NULL));
+	srand((unsigned int)time(NULL));
 }
 
 Action MCTS::Go()

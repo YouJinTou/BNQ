@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HandEvaluator\Hand.h"
+#include "HandEvaluator\HandEvaluator.h"
 
 #include "Action.h"
 #include "Card.h"
@@ -22,11 +23,13 @@ public:
 	Action LastAction() const;
 	void SetLastAction(Action action);
 	void SetStack(double wager);
-	void UpdateRanges(const State& state);
+	void UpdateRanges(State& state);
 	Holding GetHolding() const;
-	omp::Hand GetShowdownHand() const;
+	double GetShowdownValue(omp::Hand board) const;
 public:
 	bool operator<(const Player& other);
+private:
+	static const omp::HandEvaluator evaluator;
 private:
 	Position::Position seat;
 	double stack;
