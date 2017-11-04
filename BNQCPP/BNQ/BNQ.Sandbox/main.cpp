@@ -20,7 +20,7 @@ int main()
 		Player(Position::BUT, 100),
 		Player(Position::CO, 100, true, Card::s3 | Card::cJ),
 	};
-	Board board = Board(Card::c2 | Card::hJ | Card::dA);
+	Board board = Board(Card::c2, Card::hJ, Card::dA);
 	std::sort(players.begin(), players.end());
 
 	auto rootState = std::make_shared<PlayerState>(

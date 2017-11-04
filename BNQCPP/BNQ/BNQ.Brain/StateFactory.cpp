@@ -69,8 +69,8 @@ std::vector<std::shared_ptr<State>> StateFactory::CreatePlayerStates(std::shared
 
 std::vector<std::shared_ptr<State> > StateFactory::CreateChanceStates(std::shared_ptr<State> statePtr)
 {
-	int minCardPow = 4; // Card::c2;
-	int maxCardPow = 55; // Card::sA;
+	int minCardPow = 1; // Card::s2;
+	int maxCardPow = 51; // Card::dA;
 	auto board = statePtr.get()->GetBoard();
 	std::vector<std::shared_ptr<State> > chanceStates;
 	Street street = board->Turn() == Card::Card::None ? Street::Turn : Street::River;
