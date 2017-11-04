@@ -3,7 +3,6 @@
 #include <memory>
 #include <vector>
 
-#include "PlayerStrategy.h"
 #include "State.h"
 
 class StateFactory
@@ -19,6 +18,4 @@ private:
 	static std::shared_ptr<State> CreateCheckState(std::shared_ptr<State> statePtr);
 	static std::shared_ptr<State> CreateFoldState(std::shared_ptr<State> statePtr);
 	static std::shared_ptr<State> CreateRaise50State(std::shared_ptr<State> statePtr);
-private:
-	static std::shared_ptr<PlayerStrategy> Strategy(bool isHero);
 };

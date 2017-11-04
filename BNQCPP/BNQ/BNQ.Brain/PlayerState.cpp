@@ -5,7 +5,6 @@
 PlayerState::PlayerState(
 	std::shared_ptr<State> prevState,
 	StateType::StateType nextStateType,
-	PlayerStrategy* strategy,
 	std::vector<Player>& players,
 	std::shared_ptr<Board> board,
 	double pot,
@@ -14,8 +13,7 @@ PlayerState::PlayerState(
 	Street street,
 	double wagerToCall,
 	double playerWager) :
-	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState, nextStateType),
-	strategy(strategy)
+	State(players, board, pot, seatToAct, lastBettor, street, wagerToCall, playerWager, prevState, nextStateType)
 {
 }
 
@@ -61,11 +59,6 @@ void PlayerState::SetValue(bool isFinal)
 	default:
 		break;
 	}	
-}
-
-Action PlayerState::GetAction()
-{
-	return strategy->ExecuteChoice(*this);
 }
 
 omp::Hand PlayerState::GetPlayerHand(const Player& player)

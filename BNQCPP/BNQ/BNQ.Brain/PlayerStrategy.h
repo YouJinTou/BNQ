@@ -1,12 +1,13 @@
 #pragma once
 
-#include "Action.h"
-#include "Player.h"
-#include "State.h"
+#include "HandEvaluator\Hand.h"
+
+class State;
 
 class PlayerStrategy
 {
 public:
-	virtual Action ExecuteChoice(State& state) = 0;
-	virtual void AdjustStack(Action action, Player& player, double pot, double wagerToCall) = 0;
+	virtual void UpdateRange(const State& state) = 0;
+	virtual omp::Hand GetShowdownHand() const = 0;
+protected:
 };

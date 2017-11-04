@@ -4,12 +4,10 @@
 #include "Action.h"
 #include "ChanceState.h"
 #include "Constants.h"
-#include "HeroStrategy.h"
 #include "PlayerState.h"
 #include "StateFactory.h"
 #include "StateType.h"
 #include "Street.h"
-#include "VillainStrategy.h"
 
 std::vector<std::shared_ptr<State> > StateFactory::CreateStates(std::shared_ptr<State> statePtr)
 {
@@ -125,11 +123,9 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateChanceStates(std::share
 std::shared_ptr<State> StateFactory::CreateBet50State(std::shared_ptr<State> statePtr)
 {
 	State* state = statePtr.get();
-	bool isHero = state->ToAct().IsHero();
 	auto bet50State = std::make_shared<PlayerState>(
 		statePtr,
 		StateType::PlayerAction,
-		Strategy(isHero).get(),
 		state->Players(),
 		state->GetBoard(),
 		state->Pot(),
@@ -157,11 +153,9 @@ std::shared_ptr<State> StateFactory::CreateBet50State(std::shared_ptr<State> sta
 std::shared_ptr<State> StateFactory::CreateCallState(std::shared_ptr<State> statePtr)
 {
 	State* state = statePtr.get();
-	bool isHero = state->ToAct().IsHero();
 	auto callState = std::make_shared<PlayerState>(
 		statePtr,
 		state->NextStateType(),
-		Strategy(isHero).get(),
 		state->Players(),
 		state->GetBoard(),
 		state->Pot(),
@@ -193,11 +187,9 @@ std::shared_ptr<State> StateFactory::CreateCallState(std::shared_ptr<State> stat
 std::shared_ptr<State> StateFactory::CreateCheckState(std::shared_ptr<State> statePtr)
 {
 	State* state = statePtr.get();
-	bool isHero = state->ToAct().IsHero();
 	auto checkState = std::make_shared<PlayerState>(
 		statePtr,
 		state->NextStateType(),
-		Strategy(isHero).get(),
 		state->Players(),
 		state->GetBoard(),
 		state->Pot(),
@@ -225,11 +217,9 @@ std::shared_ptr<State> StateFactory::CreateCheckState(std::shared_ptr<State> sta
 std::shared_ptr<State> StateFactory::CreateFoldState(std::shared_ptr<State> statePtr)
 {
 	State* state = statePtr.get();
-	bool isHero = state->ToAct().IsHero();
 	auto foldState = std::make_shared<PlayerState>(
 		statePtr,
 		state->NextStateType(),
-		Strategy(isHero).get(),
 		state->Players(),
 		state->GetBoard(),
 		state->Pot(),
@@ -260,11 +250,9 @@ std::shared_ptr<State> StateFactory::CreateFoldState(std::shared_ptr<State> stat
 std::shared_ptr<State> StateFactory::CreateRaise50State(std::shared_ptr<State> statePtr)
 {
 	State* state = statePtr.get();
-	bool isHero = state->ToAct().IsHero();
 	auto raise50State = std::make_shared<PlayerState>(
 		statePtr,
 		StateType::PlayerAction,
-		Strategy(isHero).get(),
 		state->Players(),
 		state->GetBoard(),
 		state->Pot(),
@@ -288,14 +276,4 @@ std::shared_ptr<State> StateFactory::CreateRaise50State(std::shared_ptr<State> s
 	raise50State->SetWagerToCall(raiseSize);
 
 	return raise50State;
-}
-
-std::shared_ptr<PlayerStrategy> StateFactory::Strategy(bool isHero)
-{
-	if (isHero)
-	{
-		return std::make_shared<HeroStrategy>();
-	}
-
-	return std::make_shared<VillainStrategy>();
 }

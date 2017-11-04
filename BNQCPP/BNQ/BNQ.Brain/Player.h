@@ -3,6 +3,7 @@
 #include "Action.h"
 #include "Card.h"
 #include "Position.h"
+#include "PlayerStrategy.h"
 
 typedef unsigned long long Hand;
 
@@ -10,8 +11,8 @@ class Player
 {
 public:
 	Player() = default;
-	Player(Position::Position seat, double stack);
-	Player(Position::Position seat, double stack, bool isHero, Hand hand);
+	Player(Position::Position seat, double stack, PlayerStrategy* strategy);
+	Player(Position::Position seat, double stack, bool isHero, Hand hand, PlayerStrategy* strategy);
 	Position::Position Seat() const;
 	double Stack() const;
 	bool IsHero() const;
@@ -27,4 +28,5 @@ private:
 	bool isHero;
 	Hand hand;
 	Action lastAction;
+	PlayerStrategy* strategy;
 };

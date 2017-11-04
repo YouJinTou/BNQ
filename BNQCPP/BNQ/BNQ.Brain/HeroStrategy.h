@@ -2,9 +2,11 @@
 
 #include "PlayerStrategy.h"
 
+class State;
+
 class HeroStrategy : public PlayerStrategy
 {
 public:
-	Action ExecuteChoice(State& state);
-	void HeroStrategy::AdjustStack(Action action, Player& player, double pot, double wagerToCall);
+	void UpdateRange(const State& state);
+	omp::Hand GetShowdownHand() const;
 };

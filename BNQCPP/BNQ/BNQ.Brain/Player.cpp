@@ -1,15 +1,16 @@
 #include "Player.h"
 
-Player::Player(Position::Position seat, double stack) :
-	Player(seat, stack, false, Card::None)
+Player::Player(Position::Position seat, double stack, PlayerStrategy* strategy) :
+	Player(seat, stack, false, Card::None, strategy)
 {
 }
 
-Player::Player(Position::Position seat, double stack, bool isHero, Hand hand) :
+Player::Player(Position::Position seat, double stack, bool isHero, Hand hand, PlayerStrategy* strategy) :
 	seat(seat),
 	stack(stack),
 	isHero(isHero),
-	hand(hand)
+	hand(hand),
+	strategy(strategy)
 {
 }
 
