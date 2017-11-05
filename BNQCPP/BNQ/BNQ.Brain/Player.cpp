@@ -53,19 +53,14 @@ void Player::SetStack(double wager)
 	stack = (stack - wager) < 0.0 ? 0.0 : stack - wager;
 }
 
-void Player::UpdateRanges(State& state)
-{
-	strategy->UpdateRange(state);
-}
-
 Holding Player::GetHolding() const
 {
 	return holding;
 }
 
-double Player::GetShowdownValue(omp::Hand board) const
+PlayerStrategy * Player::Strategy() const
 {
-	return strategy->GetShowdownValue();
+	return strategy;
 }
 
 bool Player::operator<(const Player& other)

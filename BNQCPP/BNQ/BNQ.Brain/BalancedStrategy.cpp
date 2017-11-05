@@ -4,15 +4,11 @@
 
 #include "State.h"
 #include "BalancedStrategy.h"
+#include "PlayerState.h"
 
-void BalancedStrategy::UpdateRange(State& state)
+double BalancedStrategy::GetShowdownValue(State* statePtr) const
 {
-	lastState = &state;
-}
-
-double BalancedStrategy::GetShowdownValue() const
-{
-	auto board = lastState->GetBoard().get();
+	auto board = statePtr->GetBoard().get();
 	auto boardAsHand = board->GetBoardAsHand();
 	bool quadsPossible = evaluator.quadsPossible(boardAsHand);
 	bool flushPossible = evaluator.flushPossible(boardAsHand, *board);

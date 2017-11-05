@@ -5,6 +5,5 @@
 class BalancedStrategy : public PlayerStrategy
 {
 public:
-	void UpdateRange(State& state);
-	double GetShowdownValue() const;
+	double GetShowdownValue(State* statePtr) const;
 };

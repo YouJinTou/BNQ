@@ -68,7 +68,7 @@ void PlayerState::SetValue(bool isFinal)
 	}	
 }
 
-double PlayerState::ShowdownValue() const
+double PlayerState::ShowdownValue()
 {
 	auto boardHand = board->GetBoardAsHand();
 	double bestHandValue = 0;
@@ -83,7 +83,7 @@ double PlayerState::ShowdownValue() const
 			continue;
 		}
 
-		double currentHandValue = player.GetShowdownValue(boardHand);
+		double currentHandValue = GetPlayerShowdownValue(player);
 		heroHandValue = player.IsHero() ? currentHandValue : heroHandValue;
 
 		if (currentHandValue == bestHandValue)
@@ -116,7 +116,7 @@ bool PlayerState::HeroRemains() const
 			continue;
 		}
 
-		heroRemains = heroRemains && player.LastAction() == Action::Fold;
+		heroRemains = heroRemains && !player.IsPlaying();
 	}
 
 	return heroRemains;

@@ -19,6 +19,6 @@ public:
 	StateType::StateType Type() const;
 	void SetValue(bool isFinal = false);
 private:
-	double ShowdownValue() const;
+	double ShowdownValue();
 	bool HeroRemains() const;
 };

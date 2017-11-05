@@ -34,6 +34,10 @@ State::State(
 	prevState(prevState),
 	nextStateType(nextStateType)
 {
+	if (prevState == nullptr)
+	{
+		value = 0.0;
+	}
 }
 
 std::vector<Player>& State::Players()
@@ -216,7 +220,7 @@ bool State::IsFinal() const
 
 		Action lastAction = player.LastAction();
 		bool isLastActionPassive = lastAction == Action::Call || lastAction == Action::Check;
-		allPassiveActions = allPassiveActions && isLastActionPassive;
+		allPassiveActions = allPassiveActions && isLastActionPassive && !lastBettorExists;
 		allFolded = allFolded && !player.IsPlaying();
 	}
 
@@ -303,9 +307,9 @@ double State::Value() const
 	return value;
 }
 
-void State::UpdateToActRange()
+double State::GetPlayerShowdownValue(Player& player)
 {
-	ToAct().UpdateRanges(*this);
+	return player.Strategy()->GetShowdownValue(this);
 }
 
 State& State::operator=(const State& rhs)

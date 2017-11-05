@@ -9,8 +9,6 @@
 #include "Position.h"
 #include "PlayerStrategy.h"
 
-class State;
-
 class Player
 {
 public:
@@ -24,9 +22,8 @@ public:
 	Action LastAction() const;
 	void SetLastAction(Action action);
 	void SetStack(double wager);
-	void UpdateRanges(State& state);
 	Holding GetHolding() const;
-	double GetShowdownValue(omp::Hand board) const;
+	PlayerStrategy* Strategy() const;
 public:
 	bool operator<(const Player& other);
 private:
