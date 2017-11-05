@@ -29,37 +29,41 @@ void PlayerState::SetValue(bool isFinal)
 	const Player& lastActed = LastActed();
 	bool wasHero = lastActed.IsHero();
 	Action action = lastActed.LastAction();
+	double prevValue = prevState == nullptr ? 0.0 : prevState->Value();
 
 	switch (action)
 	{
 	case Action::Waiting:
-		this->value = 0.0;
+		value = prevValue;
 
 		break;
 	case Action::Bet50:
-		this->value = isFinal && wasHero ? pot :
-			wasHero ? -playerWager : 0.0;
+		value = isFinal && wasHero ? pot :
+			wasHero ? prevValue - playerWager : prevValue;
 
 		break;
 	case Action::Call:
-		this->value = isFinal && wasHero ? ShowdownValue() : 
-			wasHero ? -wagerToCall : 0.0;
+		value = isFinal ? ShowdownValue() :
+			wasHero ? prevValue - wagerToCall : prevValue;
 
 		break;
 	case Action::Check:
-		this->value = isFinal && wasHero ? ShowdownValue() : 0.0;
+		value =  isFinal ? ShowdownValue() : prevValue;
 
 		break;
 	case Action::Fold:
-		this->value = wasHero ? 0.0 : HeroRemains() ? pot : 0.0;
+		value = wasHero ? prevValue :
+			HeroRemains() ? pot : prevValue;
 
 		break;
 	case Action::Raise50:
-		this->value = isFinal && wasHero ? pot : 
-			wasHero ? -playerWager : 0.0;
+		value = isFinal && wasHero ? pot :
+			wasHero ? prevValue - playerWager : prevValue;
 
 		break;
 	default:
+		value = 0.0;
+
 		break;
 	}	
 }

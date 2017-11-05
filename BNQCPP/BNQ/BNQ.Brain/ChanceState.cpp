@@ -26,5 +26,5 @@ StateType::StateType ChanceState::Type() const
 
 void ChanceState::SetValue(bool isFinal)
 {
-	this->value = 0.0;
+	value = prevState->Value();
 }
