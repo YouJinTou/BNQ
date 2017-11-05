@@ -127,13 +127,18 @@ int GetDebugState(int size)
 {
 	switch (counter)
 	{
-	case 0: return 0;
-	case 1: return 2;
-	case 2: return 0;
-	case 3: return 2;
-	case 4: return 2;
-	case 5: return 1;
+	case 0: return 1;
+	case 1: return 1;
+	case 2: return 20;
+	case 3: return 0;
+	case 4: return 1;
+	case 5: return 20;
 	case 6: return 1;
+	case 7: return 0;
+	case 8: return 0;
+	case 9: return 0;
+	case 10: return 0;
+	case 11: return 1;
 	default:
 		return std::rand() % size;
 	}
@@ -143,18 +148,18 @@ void Node::SimulateRecursive(std::shared_ptr<State> statePtr)
 {
 	State* state = statePtr.get();
 
+	state->SetValue();
+
 	//std::cout << *state << std::endl;
 
 	if (state->IsFinal())
 	{
 		state->SetValue(true);
 
-		this->value = state->Value();
+		//std::cout << *state << std::endl;
 
 		return;
 	}
-
-	state->UpdateToActRange();
 
 	auto nextStates = StateFactory::CreateStates(statePtr);
 	/*int i = GetDebugState(nextStates.size());
