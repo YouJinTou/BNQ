@@ -20,6 +20,7 @@ public:
 	Position::Position Seat() const;
 	double Stack() const;
 	bool IsHero() const;
+	bool IsPlaying() const;
 	Action LastAction() const;
 	void SetLastAction(Action action);
 	void SetStack(double wager);

@@ -13,7 +13,8 @@ Player::Player(Position::Position seat, double stack, bool isHero, Holding holdi
 	stack(stack),
 	isHero(isHero),
 	holding(holding),
-	strategy(strategy)
+	strategy(strategy),
+	lastAction(Action::Waiting)
 {
 }
 
@@ -30,6 +31,11 @@ double Player::Stack() const
 bool Player::IsHero() const
 {
 	return isHero;
+}
+
+bool Player::IsPlaying() const
+{
+	return lastAction != Action::Fold;
 }
 
 Action Player::LastAction() const
