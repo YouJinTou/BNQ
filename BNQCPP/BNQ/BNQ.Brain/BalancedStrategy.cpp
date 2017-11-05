@@ -37,23 +37,29 @@ double BalancedStrategy::GetShowdownValue() const
 	int highestRank = omp::highestCardRank(board->BoardCards());
 
 	srand((unsigned int)time(NULL));
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> totalDis(0, totalHands);
+	std::uniform_int_distribution<int> rankDis(lowestRank, highestRank);
 
-	int handNumber = rand() % totalHands + 1;
+	int handNumber = totalDis(gen);
+	int rank = rankDis(gen);
+	double bluff = evaluator.evaluate(boardAsHand);
 
-	if (handNumber >= onePairThresh) 
-		return omp::PAIR + lowestRank + rand() % (omp::PAIR + lowestRank + highestRank + 1);
-	else if (handNumber >= bluffsThresh) 
-		return evaluator.evaluate(boardAsHand);
+	if (handNumber >= onePairThresh)
+		return omp::PAIR + rank;
+	else if (handNumber >= bluffsThresh)
+		return bluff;
 	else if (handNumber >= twoPairThresh) 
-		return omp::TWO_PAIR + lowestRank + rand() % (omp::TWO_PAIR + lowestRank + highestRank + 1);
+		return omp::TWO_PAIR + rank;
 	else if (handNumber >= tripsThresh) 
-		return omp::THREE_OF_A_KIND + lowestRank + rand() % (omp::THREE_OF_A_KIND + lowestRank + highestRank + 1);
+		return omp::THREE_OF_A_KIND + rank;
 	else if (handNumber >= straightThresh) 
-		return omp::STRAIGHT;
+		return straightPossible ? omp::STRAIGHT : bluff;
 	else if (handNumber >= flushThresh) 
-		return omp::FLUSH;
+		return flushPossible ? omp::FLUSH : bluff;
 	else if (handNumber >= boat) 
-		return omp::FULL_HOUSE;
+		return quadsPossible ? omp::FULL_HOUSE : bluff;
 	else 
 		return omp::FOUR_OF_A_KIND;
 }
