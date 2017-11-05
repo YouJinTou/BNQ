@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 
+#include "BalancedStrategy.h"
 #include "Card.h"
 #include "HeroStrategy.h"
 #include "MCTS.h"
@@ -10,18 +11,17 @@
 #include "PlayerState.h"
 #include "Position.h"
 #include "State.h"
-#include "BalancedStrategy.h"
 
 int main()
 {
 	std::vector<Player> players
 	{
-		Player(Position::MP1, 100, &BalancedStrategy()),
-		Player(Position::BB, 100, &BalancedStrategy()),
-		Player(Position::BUT, 100, &BalancedStrategy()),
-		Player(Position::CO, 100, true, { Card::s3, Card::cJ }, &HeroStrategy()),
+		//Player(Position::MP1, 100, &BalancedStrategy()),
+		Player(Position::BB, 98, &BalancedStrategy()),
+		//Player(Position::BUT, 100, &BalancedStrategy()),
+		Player(Position::CO, 100, true, { Card::sA, Card::cA }, &HeroStrategy()),
 	};
-	Board board = Board(Card::c2, Card::hJ, Card::dA);
+	Board board = Board(Card::s2, Card::s6, Card::dA);
 	std::sort(players.begin(), players.end());
 
 	auto rootState = std::make_shared<PlayerState>(
@@ -36,7 +36,7 @@ int main()
 		0.0,
 		0.0);
 	auto rootNode = Node(nullptr, rootState);
-	MCTS mcts = MCTS(rootNode);
+	MCTS mcts = MCTS(rootNode, 10.0);
 	Action bestAction = mcts.Go();
 
 	return 0;
