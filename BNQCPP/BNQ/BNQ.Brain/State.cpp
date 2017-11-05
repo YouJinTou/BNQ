@@ -199,6 +199,11 @@ bool State::IsFinal() const
 	return isFinal;
 }
 
+bool State::IsFinalState() const
+{
+	return nextStateType == StateType::Final;
+}
+
 bool State::IsClosingAction(const Player& player) const
 {
 	bool lastBettorExists = lastBettor != NoLastBettor;
@@ -303,6 +308,11 @@ std::ostream& operator<<(std::ostream& os, const State& state)
 
 	for (auto& player : state.players)
 	{
+		if (player.Seat() == state.seatToAct)
+		{
+			os << "!!!" << std::endl;
+		}
+
 		os << "Player: " << player.Seat() << std::endl;
 		os << "Stack: " << player.Stack() << std::endl;
 		os << "Last action: " << player.LastAction() << std::endl;

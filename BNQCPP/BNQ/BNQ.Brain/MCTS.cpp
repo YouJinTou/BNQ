@@ -18,7 +18,7 @@ Action MCTS::Go()
 
 		Select();
 
-		if (current->Visited())
+		if (current->Visited() && !current->IsFinal())
 		{
 			Expand();
 		}

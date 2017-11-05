@@ -52,6 +52,7 @@ public:
 	void SetPlayerWager(double wager);
 	bool FacingCheck() const;
 	bool IsFinal() const;
+	bool IsFinalState() const;
 	bool IsClosingAction(const Player& player) const;
 	double Value() const;
 	void UpdateToActRange();

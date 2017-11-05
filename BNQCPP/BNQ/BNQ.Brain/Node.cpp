@@ -18,6 +18,11 @@ bool Node::IsLeaf() const
 	return children.size() == 0;
 }
 
+bool Node::IsFinal() const
+{
+	return statePtr->IsFinalState();
+}
+
 bool Node::Visited() const
 {
 	return visits > 0;
@@ -123,10 +128,10 @@ int GetDebugState(int size)
 	switch (counter)
 	{
 	case 0: return 0;
-	case 1: return 1;
-	case 2: return 2;
-	case 3: return 0;
-	case 4: return 1;
+	case 1: return 2;
+	case 2: return 0;
+	case 3: return 2;
+	case 4: return 2;
 	case 5: return 1;
 	case 6: return 1;
 	default:
@@ -146,17 +151,15 @@ void Node::SimulateRecursive(std::shared_ptr<State> statePtr)
 
 		this->value = state->Value();
 
-		std::cout << *state << std::endl;
-
 		return;
 	}
 
 	state->UpdateToActRange();
 
 	auto nextStates = StateFactory::CreateStates(statePtr);
-	//int i = GetDebugState(nextStates.size());
-	//auto nextState = nextStates[i]; 
-	//counter++;
+	/*int i = GetDebugState(nextStates.size());
+	auto nextState = nextStates[i]; 
+	counter++;*/
 	auto nextState = nextStates[std::rand() % nextStates.size()];
 	
 	SimulateRecursive(nextState);

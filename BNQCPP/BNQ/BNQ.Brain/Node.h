@@ -13,6 +13,7 @@ public:
 	Node() = default;
 	Node(Node* prev, std::shared_ptr<State> state);
 	bool IsLeaf() const;
+	bool IsFinal() const;
 	bool Visited() const;
 	double UCB() const;
 	double Value() const;
