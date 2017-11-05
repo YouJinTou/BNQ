@@ -21,13 +21,13 @@ std::vector<std::shared_ptr<State> > StateFactory::CreateStates(std::shared_ptr<
 	case StateType::Chance:
 		return CreateChanceStates(statePtr);
 	case StateType::Final:
-		assert("CreateStates Final reached.");
+		break;
 	case StateType::PlayerAction:
 		return CreatePlayerStates(statePtr);
 	case StateType::None:
-		assert("CreateStates None reached.");
+		break;
 	default:
-		assert("CreateStates default reached.");
+		break;
 	}
 
 	return states;
@@ -235,7 +235,7 @@ std::shared_ptr<State> StateFactory::CreateFoldState(std::shared_ptr<State> stat
 	player.SetLastAction(Action::Fold);
 
 	bool isClosingAction = foldState->IsClosingAction(player);
-	bool isFinal = isClosingAction && foldState->IsFinal();
+	bool isFinal = player.IsHero() ? true : isClosingAction && foldState->IsFinal();
 	auto nextStateType = isFinal ? StateType::Final :
 		isClosingAction ? StateType::Chance : StateType::PlayerAction;
 
