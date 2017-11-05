@@ -37,8 +37,10 @@ public:
 	std::shared_ptr<Board> GetBoard();
 	double Pot() const;
 	void SetPot(double wager);
+	const Player& FirstToAct();
 	Position::Position SeatToAct() const;
 	void SetSeatToAct();
+	void SetSeatToAct(Position::Position position);
 	void SetLastActed(Position::Position position);
 	Position::Position LastBettor() const;
 	void SetLastBettor(Position::Position position);
@@ -78,7 +80,7 @@ protected:
 	double playerWager;
 	double value;
 protected:
-	const Player& NextToAct() const;
+	const Player& NextToAct();
 private:
 	int IndexOf(Position::Position pos) const;
 	int IndexOf(const Player& player) const;

@@ -105,6 +105,11 @@ void State::SetSeatToAct()
 		NextToAct().Seat();
 }
 
+void State::SetSeatToAct(Position::Position position)
+{
+	seatToAct = position;
+}
+
 void State::SetLastActed(Position::Position position)
 {
 	lastActed = position;
@@ -197,7 +202,7 @@ bool State::IsFinal() const
 
 	for (auto& player : players)
 	{
-		if (player.IsHero() && player.LastAction() == Action::Fold)
+		if (player.IsHero() && !player.IsPlaying())
 		{
 			return true;
 		}
@@ -212,7 +217,7 @@ bool State::IsFinal() const
 		Action lastAction = player.LastAction();
 		bool isLastActionPassive = lastAction == Action::Call || lastAction == Action::Check;
 		allPassiveActions = allPassiveActions && isLastActionPassive;
-		allFolded = allFolded && !player.IsHero() && lastAction == Action::Fold;
+		allFolded = allFolded && !player.IsPlaying();
 	}
 
 	bool isRiver = board->River() != Card::None;
@@ -242,7 +247,7 @@ bool State::IsClosingAction(const Player& player) const
 
 			for (int p = lastBettorIndex - 1; p >= 0; p--)
 			{
-				if (isClosingAction && players[p].LastAction() != Action::Fold)
+				if (isClosingAction && players[p].IsPlaying())
 				{
 					isClosingAction = playerIndex == p;
 
@@ -258,7 +263,7 @@ bool State::IsClosingAction(const Player& player) const
 
 		for (auto& p : players)
 		{
-			if (p.Seat() > player.Seat() && p.LastAction() != Action::Fold)
+			if (p.Seat() > player.Seat() && p.IsPlaying())
 			{
 				return false;
 			}
@@ -266,7 +271,7 @@ bool State::IsClosingAction(const Player& player) const
 
 		for (auto& p : players)
 		{
-			if (p.Seat() < lastBettor && p.LastAction() != Action::Fold)
+			if (p.Seat() < lastBettor && p.IsPlaying())
 			{
 				return false;
 			}
@@ -279,7 +284,7 @@ bool State::IsClosingAction(const Player& player) const
 
 	for (int p = players.size() - 1; p >= 0; --p)
 	{
-		if (isClosingAction && players[p].LastAction() != Action::Fold)
+		if (isClosingAction && players[p].IsPlaying())
 		{
 			isClosingAction = playerIndex == p;
 
@@ -311,6 +316,7 @@ State& State::operator=(const State& rhs)
 	board = rhs.board;
 	pot = rhs.pot;
 	seatToAct = rhs.seatToAct;
+	lastActed = rhs.lastActed;
 	lastBettor = rhs.lastBettor;
 	street = rhs.street;
 	wagerToCall = rhs.wagerToCall;
@@ -331,12 +337,8 @@ std::ostream& operator<<(std::ostream& os, const State& state)
 
 	for (auto& player : state.players)
 	{
-		if (player.Seat() == state.seatToAct)
-		{
-			os << "!!!" << std::endl;
-		}
-
-		os << "Player: " << player.Seat() << std::endl;
+		os << "Player: " << player.Seat() << 
+			(player.Seat() == state.seatToAct ? " <<< " : "")  << std::endl;
 		os << "Stack: " << player.Stack() << std::endl;
 		os << "Last action: " << player.LastAction() << std::endl;
 		os << std::endl;
@@ -352,90 +354,44 @@ bool State::FacingCheck() const
 	return wagerToCall == 0.0;
 }
 
-const Player& State::NextToAct() const
+const Player& State::FirstToAct()
 {
-	bool newRound = true;
+	Player* firstToAct = nullptr;
 
 	for (auto& player : players)
 	{
-		if (player.LastAction() != Action::Fold)
+		if (player.IsPlaying())
 		{
-			newRound = newRound && player.LastAction() == Action::Waiting;
+			firstToAct = &player;
+
+			break;
 		}
 	}
 
-	if (newRound)
+	return *firstToAct;
+}
+
+const Player& State::NextToAct()
+{
+	const Player& toAct = ToAct();
+	Player* nextToAct = nullptr;
+
+	if (IsClosingAction(toAct))
 	{
-		for (auto& player : players)
-		{
-			if (player.LastAction() == Action::Waiting)
-			{
-				return player;
-			}
-		}
-
-		assert(0);
-	}
-
-	bool lastBettorExists = lastBettor != NoLastBettor;
-
-	if (lastBettorExists)
-	{
-		bool lastBettorInPosition = lastBettor - seatToAct > 0;
-
-		if (lastBettorInPosition)
-		{
-			for (auto& player : players)
-			{
-				if (player.Seat() > seatToAct && player.LastAction() != Action::Fold)
-				{
-					return player;
-				}
-			}
-
-			assert(0);
-		}
-		else
-		{
-			for (auto& player : players)
-			{
-				if (player.Seat() > seatToAct && player.LastAction() != Action::Fold)
-				{
-					return player;
-				}
-			}
-
-			for (auto& player : players)
-			{
-				if (player.Seat() < seatToAct && player.LastAction() != Action::Fold)
-				{
-					return player;
-				}
-			}
-
-			assert(0);
-		}
+		return FirstToAct();
 	}
 
 	for (auto& player : players)
 	{
-		if (player.Seat() > seatToAct && player.LastAction() != Action::Fold)
+		if (player.Seat() > seatToAct && player.IsPlaying())
 		{
-			return player;
+			nextToAct = &player;
+
+			break;
 		}
 	}
 
-	for (auto& player : players)
-	{
-		if (player.LastAction() != Action::Fold)
-		{
-			return player;
-		}
-	}
-
-	assert(0);
-
-	throw std::logic_error("We must always return a player.");
+	return (nextToAct == nullptr) ? FirstToAct() : *nextToAct;
 }
 
 int State::IndexOf(Position::Position pos) const
