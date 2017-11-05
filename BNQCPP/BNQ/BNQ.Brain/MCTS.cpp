@@ -3,16 +3,19 @@
 
 #include "MCTS.h"
 
-MCTS::MCTS(Node root) :
+MCTS::MCTS(Node root, double allowance) :
 	root(root),
-	current(&root)
+	current(&root),
+	allowance(allowance)
 {
-	srand((unsigned int)time(NULL));
 }
 
 Action MCTS::Go()
 {
-	while (true)
+	clock_t beginTime = clock();
+	double elapsedSecs = 0.0;
+
+	while (elapsedSecs < allowance)
 	{
 		current = &root;
 
@@ -26,6 +29,11 @@ Action MCTS::Go()
 		Simulate();
 
 		Backpropagate();
+
+		//system("cls");
+
+		clock_t endTime = clock();
+		elapsedSecs = double(endTime - beginTime) / CLOCKS_PER_SEC;
 	}
 
 	return Action();

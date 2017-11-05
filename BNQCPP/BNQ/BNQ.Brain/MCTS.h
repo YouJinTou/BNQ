@@ -8,11 +8,12 @@
 class MCTS
 {
 public:
-	MCTS(Node root);
+	MCTS(Node root, double allowance);
 	Action Go();
 private:
 	Node root;
 	Node* current;
+	const double allowance;
 private:
 	void Select();
 	void Expand();
