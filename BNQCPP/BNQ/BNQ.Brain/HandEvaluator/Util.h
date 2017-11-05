@@ -112,7 +112,7 @@ inline int lowestCardRank(unsigned long long board)
 {
 	for (size_t mask = 0; mask < 13; mask++)
 	{
-		if ((board & mask) != 0)
+		if ((board & NibbleMasks[mask]) != 0)
 		{
 			return mask;
 		}
@@ -125,7 +125,7 @@ inline int highestCardRank(unsigned long long board)
 {
 	for (size_t mask = 12; mask >= 0; mask--)
 	{
-		if ((board & mask) != 0)
+		if ((board & NibbleMasks[mask]) != 0)
 		{
 			return mask;
 		}

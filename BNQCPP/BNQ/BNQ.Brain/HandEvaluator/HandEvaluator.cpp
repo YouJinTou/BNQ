@@ -66,15 +66,12 @@ namespace omp {
 
 		for (size_t c = 0; c < 8; c++)
 		{
+			int cardRank = c / 2;
 			do
 			{
-				flushCards[c] = (Card::Card)(1i64 << cardPower);
+				flushCards[c] = (Card::Card)(1i64 << (cardRank + cardPower));
+				cardPower += 4;
 			} while ((flushCards[c] & boardAsNumber) != 0);
-
-			if (c % 2 != 0)
-			{
-				cardPower++;
-			}
 		}
 
 		Hand clubHand =
