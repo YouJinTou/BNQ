@@ -105,6 +105,11 @@ void State::SetSeatToAct()
 		NextToAct().Seat();
 }
 
+void State::SetLastActed(Position::Position position)
+{
+	lastActed = position;
+}
+
 Position::Position State::LastBettor() const
 {
 	return lastBettor;
@@ -130,6 +135,23 @@ Player& State::ToAct()
 	}
 
 	return players[playerToAct];
+}
+
+Player& State::LastActed()
+{
+	size_t playerLastActed = 0;
+
+	for (size_t p = 0; p < players.size(); ++p)
+	{
+		if (players[p].Seat() == lastActed)
+		{
+			playerLastActed = p;
+
+			break;
+		}
+	}
+
+	return players[playerLastActed];
 }
 
 Street State::CurrentStreet() const

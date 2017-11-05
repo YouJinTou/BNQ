@@ -39,9 +39,11 @@ public:
 	void SetPot(double wager);
 	Position::Position SeatToAct() const;
 	void SetSeatToAct();
+	void SetLastActed(Position::Position position);
 	Position::Position LastBettor() const;
 	void SetLastBettor(Position::Position position);
 	Player& ToAct();
+	Player& LastActed();
 	std::vector<Player>& Players();
 	const Player& Hero() const;
 	Street CurrentStreet() const;
@@ -69,6 +71,7 @@ protected:
 	std::shared_ptr<Board> board;
 	double pot;
 	Position::Position seatToAct;
+	Position::Position lastActed;
 	Position::Position lastBettor;
 	Street street;
 	double wagerToCall;

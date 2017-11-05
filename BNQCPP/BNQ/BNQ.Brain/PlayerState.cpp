@@ -26,9 +26,9 @@ StateType::StateType PlayerState::Type() const
 
 void PlayerState::SetValue(bool isFinal)
 {
-	const Player& toAct = ToAct();
-	bool isHero = toAct.IsHero();
-	Action action = toAct.LastAction();
+	const Player& lastActed = LastActed();
+	bool wasHero = lastActed.IsHero();
+	Action action = lastActed.LastAction();
 
 	switch (action)
 	{
@@ -37,25 +37,26 @@ void PlayerState::SetValue(bool isFinal)
 
 		break;
 	case Action::Bet50:
-		this->value = isFinal && isHero ? pot :
-			isHero ? -playerWager : 0.0;
+		this->value = isFinal && wasHero ? pot :
+			wasHero ? -playerWager : 0.0;
 
 		break;
 	case Action::Call:
-		this->value = isFinal && isHero ? ShowdownValue() : 
-			isHero ? -wagerToCall : 0.0;
+		this->value = isFinal && wasHero ? ShowdownValue() : 
+			wasHero ? -wagerToCall : 0.0;
 
 		break;
 	case Action::Check:
-		this->value = isFinal && isHero ? ShowdownValue() : 0.0;
+		this->value = isFinal && wasHero ? ShowdownValue() : 0.0;
 
 		break;
 	case Action::Fold:
-		this->value = isHero ? 0.0 : HeroRemains() ? pot : 0.0;
+		this->value = wasHero ? 0.0 : HeroRemains() ? pot : 0.0;
 
 		break;
 	case Action::Raise50:
-		this->value = isHero ? -playerWager : 0.0;
+		this->value = isFinal && wasHero ? pot : 
+			wasHero ? -playerWager : 0.0;
 
 		break;
 	default:
@@ -74,6 +75,11 @@ double PlayerState::ShowdownValue() const
 
 	for (auto& player : players)
 	{
+		if (player.LastAction() == Action::Fold)
+		{
+			continue;
+		}
+
 		double currentHandValue = player.GetShowdownValue(boardHand);
 		bool isHero = player.IsHero();
 
@@ -90,7 +96,6 @@ double PlayerState::ShowdownValue() const
 		else if (currentHandValue > bestHandValue)
 		{
 			bestHandValue = currentHandValue;
-			currentHandValue = -1;
 		}
 	}
 
