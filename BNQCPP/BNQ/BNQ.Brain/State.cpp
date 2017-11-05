@@ -326,6 +326,7 @@ std::ostream& operator<<(std::ostream& os, const State& state)
 	os << "Pot: " << state.pot << std::endl;
 	os << "Last bettor: " << state.lastBettor << std::endl;
 	os << "Last bet: " << state.wagerToCall << std::endl;
+	os << "Hero value: " << state.value << std::endl;
 	os << "-------------------------------------------------" << std::endl;
 
 	for (auto& player : state.players)
