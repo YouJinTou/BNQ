@@ -75,7 +75,6 @@ double PlayerState::ShowdownValue() const
 	double heroHandValue = 0;
 	double tieHandValue = 0;
 	int tieCounter = 1;
-	bool tieWithHeroExists = false;
 
 	for (auto& player : players)
 	{
@@ -85,12 +84,7 @@ double PlayerState::ShowdownValue() const
 		}
 
 		double currentHandValue = player.GetShowdownValue(boardHand);
-		bool isHero = player.IsHero();
-
-		if (isHero)
-		{
-			heroHandValue = currentHandValue;
-		}
+		heroHandValue = player.IsHero() ? currentHandValue : heroHandValue;
 
 		if (currentHandValue == bestHandValue)
 		{
