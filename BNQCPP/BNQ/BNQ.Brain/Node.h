@@ -26,8 +26,7 @@ public:
 public:
 	Node& operator=(const Node& rhs);
 private:
-	static constexpr double ExplorationConstant = 2.0;
-	static int IterationsCount;
+	static constexpr double ExplorationConstant = 2;
 private:
 	StateType::StateType CurrentState() const;
 	StateType::StateType NextState() const;

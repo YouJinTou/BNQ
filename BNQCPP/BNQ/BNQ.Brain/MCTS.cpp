@@ -15,7 +15,7 @@ Action MCTS::Go()
 	clock_t beginTime = clock();
 	double elapsedSecs = 0.0;
 
-	while (elapsedSecs < allowance)
+	while (true)
 	{
 		current = &root;
 
@@ -46,14 +46,14 @@ void MCTS::Select()
 		return;
 	}
 
-	double currentBest = DBL_MIN;
+	double currentBest = -DBL_MAX;
 	std::shared_ptr<Node>bestNode;
 
 	for (auto child : current->Children())
 	{
 		auto childUCB = child->UCB();
 
-		if (currentBest < childUCB)
+		if (childUCB > currentBest)
 		{
 			currentBest = childUCB;
 			bestNode = child;

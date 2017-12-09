@@ -5,8 +5,6 @@
 #include "StateFactory.h"
 #include "BalancedStrategy.h"
 
-int Node::IterationsCount = 0;
-
 Node::Node(Node* prev, std::shared_ptr<State> state) :
 	prevPtr(prev),
 	statePtr(state)
@@ -35,9 +33,10 @@ double Node::UCB() const
 		return DBL_MAX;
 	}
 
+	int parentVisits = this->prevPtr->visits;
 	double exploitationTerm = value / visits;
-	double explorationTerm = std::sqrt(std::log(IterationsCount) / visits);
-	double UCB = exploitationTerm + ExplorationConstant * explorationTerm;
+	double explorationTerm = std::sqrt(std::log(parentVisits) / visits);
+	double UCB = exploitationTerm + (ExplorationConstant * explorationTerm);
 
 	return UCB;
 }
@@ -84,16 +83,15 @@ void Node::Simulate()
 void Node::Backpropagate()
 {
 	Node* current = this;
+	double value = (current == nullptr) ? 0.0 : current->statePtr->Value();
 
 	while (current != nullptr)
 	{
 		current->UpdateVisits();
-		current->UpdateValue(current->statePtr->Value());
+		current->UpdateValue(value);
 
 		current = current->prevPtr.get();
 	}
-
-	IterationsCount++;
 }
 
 std::vector<std::shared_ptr<Node> >& Node::Children()
@@ -127,19 +125,19 @@ int GetDebugState(int size)
 {
 	switch (counter)
 	{
-	case 0: return 1;
+	case 0: return 0;
 	case 1: return 1;
 	case 2: return 20;
-	case 3: return 0;
-	case 4: return 1;
-	case 5: return 20;
-	case 6: return 1;
-	case 7: return 0;
+	case 3: return 1;
+	case 4: return 0;
+	case 5: return 1;
+	case 6: return 20;
+	case 7: return 1;
 	case 8: return 0;
-	case 9: return 0;
-	case 10: return 0;
-	case 11: return 1;
+	case 9: return 1;
 	default:
+		counter = 0;
+
 		return std::rand() % size;
 	}
 }
