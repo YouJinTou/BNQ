@@ -120,6 +120,7 @@
     <ClInclude Include="Card.h" />
     <ClInclude Include="ChanceState.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="EquiprobableStrategy.h" />
     <ClInclude Include="HandEvaluator\Constants.h" />
     <ClInclude Include="HandEvaluator\Hand.h" />
     <ClInclude Include="HandEvaluator\HandEvaluator.h" />
@@ -143,6 +144,7 @@
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="ChanceState.cpp" />
+    <ClCompile Include="EquiprobableStrategy.cpp" />
     <ClCompile Include="HandEvaluator\HandEvaluator.cpp" />
     <ClCompile Include="HeroStrategy.cpp" />
     <ClCompile Include="MCTS.cpp" />
